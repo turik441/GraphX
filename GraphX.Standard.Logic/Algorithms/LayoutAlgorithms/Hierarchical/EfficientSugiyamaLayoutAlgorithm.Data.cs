@@ -17,7 +17,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             /// <summary>
             /// Gets the original edge of this SugiEdge.
             /// </summary>
-            public TEdge OriginalEdge { get { return this.Tag; } }
+            public TEdge OriginalEdge => this.Tag;
 
             /// <summary>
             /// Gets or sets that the edge is included in a 

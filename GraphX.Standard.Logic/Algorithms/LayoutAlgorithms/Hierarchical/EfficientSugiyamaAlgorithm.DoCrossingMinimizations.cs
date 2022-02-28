@@ -25,22 +25,22 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         /// </summary>
         private void DoCrossingMinimizations(CancellationToken cancellationToken)
         {
-            int prevCrossings = int.MaxValue;
-            int crossings = int.MaxValue;
-            int phase = 1;
+            var prevCrossings = int.MaxValue;
+            var crossings = int.MaxValue;
+            var phase = 1;
 
             _crossCounts = new int[_layers.Count];
             _sparseCompactionByLayerBackup = new IList<Edge<Data>>[_layers.Count];
             _alternatingLayers = new AlternatingLayer[_layers.Count];
-            for (int i = 0; i < _layers.Count; i++)
+            for (var i = 0; i < _layers.Count; i++)
                 _crossCounts[i] = int.MaxValue;
 
-            int phase1iterationLeft = 100;
-            int phase2iterationLeft = _layers.Count;
-            bool enableSameMeasureOptimization = true;
-            bool changed = false;
-            bool c = false;
-            bool wasPhase2 = false;
+            var phase1iterationLeft = 100;
+            var phase2iterationLeft = _layers.Count;
+            var enableSameMeasureOptimization = true;
+            var changed = false;
+            var c = false;
+            var wasPhase2 = false;
             do
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -79,7 +79,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         /// <returns>The number of the edge crossings.</returns>
         private int Sweeping(int startLayerIndex, int endLayerIndex, int step, bool enableSameMeasureOptimization, out bool changed, ref int phase, CancellationToken cancellationToken)
         {
-            int crossings = 0;
+            var crossings = 0;
             changed = false;
             AlternatingLayer alternatingLayer = null;
             if (_alternatingLayers.Length == 0) return 0;
@@ -94,10 +94,10 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                 alternatingLayer = _alternatingLayers[startLayerIndex];
             }
                 OutputAlternatingLayer(alternatingLayer, startLayerIndex, 0);
-            for (int i = startLayerIndex; i != endLayerIndex; i += step)
+            for (var i = startLayerIndex; i != endLayerIndex; i += step)
             {
-                int ci = Math.Min(i, i + step);
-                int prevCrossCount = _crossCounts[ci];
+                var ci = Math.Min(i, i + step);
+                var prevCrossCount = _crossCounts[ci];
 
                 if (_alternatingLayers[i+step] != null) 
                 {
@@ -107,7 +107,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                     _crossCounts[ci] = prevCrossCount;
                 }
 
-                int crossCount = CrossingMinimizationBetweenLayers(ref alternatingLayer, i, i + step, enableSameMeasureOptimization, prevCrossCount, phase, cancellationToken);
+                var crossCount = CrossingMinimizationBetweenLayers(ref alternatingLayer, i, i + step, enableSameMeasureOptimization, prevCrossCount, phase, cancellationToken);
 
                 if (crossCount < prevCrossCount || phase == 2 || changed)
                 {
@@ -163,8 +163,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             _layers[i].Clear();
             foreach (var item in alternatingLayer)
             {
-                var vertex = item as SugiVertex;
-                if (vertex == null)
+                if (!(item is SugiVertex vertex))
                     continue;
                 _layers[i].Add(vertex);
                 vertex.IndexInsideLayer = i;
@@ -182,7 +181,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         {
             //decide which way we are sweeping (up or down)
             //straight = down, reverse = up
-            bool straightSweep = (actualLayerIndex < nextLayerIndex);
+            var straightSweep = (actualLayerIndex < nextLayerIndex);
             var nextAlternatingLayer = alternatingLayer.Clone();
 
             /* 1 */
@@ -200,7 +199,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             nextAlternatingLayer.SetPositions();
 
             /* 5 */
-            int crossCount = DoCrossCountingAndOptimization(alternatingLayer, nextAlternatingLayer, straightSweep, enableSameMeasureOptimization, (phase == 2), prevCrossCount, cancellationToken);
+            var crossCount = DoCrossCountingAndOptimization(alternatingLayer, nextAlternatingLayer, straightSweep, enableSameMeasureOptimization, (phase == 2), prevCrossCount, cancellationToken);
 
             /* 6 */
             nextAlternatingLayer.EnsureAlternatingAndPositions();
@@ -216,7 +215,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             var vertices = nextAlternatingLayer.OfType<SugiVertex>().ToArray();
             int startIndex, endIndex;
             maxRangeLength = 0;
-            int rangeCount = 0;
+            var rangeCount = 0;
             ranges = new List<int>();
             for (startIndex = 0; startIndex < vertices.Length; startIndex = endIndex + 1)
             {
@@ -229,8 +228,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
                 if (endIndex > startIndex)
                 {
-                    int rangeLength = 0;
-                    for (int i = startIndex; i <= endIndex; i++)
+                    var rangeLength = 0;
+                    for (var i = startIndex; i <= endIndex; i++)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
@@ -262,12 +261,11 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
             _sparseCompationGraphEdgesOfLayer = new List<Edge<Data>>();
             SugiVertex vertex = null, prevVertex = null;
-            for (int i = 1; i < nextAlternatingLayer.Count; i += 2)
+            for (var i = 1; i < nextAlternatingLayer.Count; i += 2)
             {
                 vertex = nextAlternatingLayer[i] as SugiVertex;
-                var prevContainer = nextAlternatingLayer[i - 1] as SegmentContainer;
                 var nextContainer = nextAlternatingLayer[i + 1] as SegmentContainer;
-                if (prevContainer != null && prevContainer.Count > 0)
+                if (nextAlternatingLayer[i - 1] is SegmentContainer prevContainer && prevContainer.Count > 0)
                 {
                     var lastSegment = prevContainer[prevContainer.Count - 1];
                     var edge = new Edge<Data>(lastSegment, vertex);
@@ -339,16 +337,14 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
             if (enableSameMeasureOptimization || reverseVerticesWithSameMeasure)
             {
-                IList<int> ranges;
-                int maxRangeLength;
-                var verticesWithSameMeasure = FindVerticesWithSameMeasure(cancellationToken, nextAlternatingLayer, straightSweep, out ranges, out maxRangeLength);
+                var verticesWithSameMeasure = FindVerticesWithSameMeasure(cancellationToken, nextAlternatingLayer, straightSweep, out var ranges, out var maxRangeLength);
                 var verticesWithSameMeasureSet = new HashSet<SugiVertex>(verticesWithSameMeasure);
 
                 //initialize permutation indices
-                for (int i = 0; i < verticesWithSameMeasure.Count; i++)
+                for (var i = 0; i < verticesWithSameMeasure.Count; i++)
                     verticesWithSameMeasure[i].PermutationIndex = i;
 
-                int bestCrossCount = prevCrossCount;
+                var bestCrossCount = prevCrossCount;
                 foreach (var realEdge in realEdges)
                     realEdge.SaveMarkedToTemp();
 
@@ -377,7 +373,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                     }
                 }
 
-                int maxPermutations = EfficientSugiyamaLayoutParameters.MAX_PERMUTATIONS;
+                var maxPermutations = EfficientSugiyamaLayoutParameters.MAX_PERMUTATIONS;
                 do
                 {
                     maxPermutations--;
@@ -403,7 +399,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                     edgePairs.AddRange(virtualEdgePairs);
                     edgePairs.AddRange(realEdgePairs);
 
-                    int crossCount = BiLayerCrossCount(edgePairs, firstLayerSize, secondLayerSize, cancellationToken);
+                    var crossCount = BiLayerCrossCount(edgePairs, firstLayerSize, secondLayerSize, cancellationToken);
 
                     if (reverseVerticesWithSameMeasure)
                         return crossCount;
@@ -453,11 +449,10 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             HashSet<SugiVertex> vertexSet,
             IList<SugiVertex> vertexList)
         {
-            int reinsertIndex = 0;
-            for (int i = 0; i < layer.Count; i++)
+            var reinsertIndex = 0;
+            for (var i = 0; i < layer.Count; i++)
             {
-                var vertex = layer[i] as SugiVertex;
-                if (vertex == null || !vertexSet.Contains(vertex))
+                if (!(layer[i] is SugiVertex vertex) || !vertexSet.Contains(vertex))
                     continue;
 
                 layer.RemoveAt(i);
@@ -494,8 +489,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             var realEdges = new List<SugiEdge>();
             foreach (var item in topLayer)
             {
-                var vertex = item as SugiVertex;
-                if (vertex == null || vertex.Type == VertexTypes.PVertex)
+                if (!(item is SugiVertex vertex) || vertex.Type == VertexTypes.PVertex)
                     continue;
 
                 foreach (var edge in _graph.OutEdges(vertex))
@@ -511,8 +505,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private IList<CrossCounterPair> FindVirtualEdgePairs(AlternatingLayer topLayer, AlternatingLayer bottomLayer)
         {
             var virtualEdgePairs = new List<CrossCounterPair>();
-            Queue<VertexGroup> firstLayerQueue = GetContainerLikeItems(topLayer, VertexTypes.PVertex);
-            Queue<VertexGroup> secondLayerQueue = GetContainerLikeItems(bottomLayer, VertexTypes.QVertex);
+            var firstLayerQueue = GetContainerLikeItems(topLayer, VertexTypes.PVertex);
+            var secondLayerQueue = GetContainerLikeItems(bottomLayer, VertexTypes.QVertex);
             VertexGroup vg1, vg2;
             vg1 = new VertexGroup();
             vg2 = new VertexGroup();
@@ -552,8 +546,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         private bool Permutate(IList<SugiVertex> vertices, IList<int> ranges) 
         {
-            Random rnd = new Random(Parameters.Seed);
-            bool b = false;
+            var rnd = new Random(Parameters.Seed);
+            var b = false;
             for (int i = 0, startIndex = 0; i < ranges.Count; startIndex += ranges[i], i++) {
                 b = b || PermutateSomeHow(vertices, startIndex, ranges[i], rnd);
             }
@@ -571,8 +565,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         private bool PermutateRandom(IList<SugiVertex> vertices, int startIndex, int count, Random rnd) 
         {
-            int endIndex = startIndex + count;
-            for (int i = startIndex; i < endIndex; i++) 
+            var endIndex = startIndex + count;
+            for (var i = startIndex; i < endIndex; i++) 
             {
                 vertices[i].PermutationIndex = rnd.Next(count);
             }
@@ -582,7 +576,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private bool Permutate(IList<SugiVertex> vertices, int startIndex, int count)
         {
             //do the initial ordering
-            int n = startIndex + count;
+            var n = startIndex + count;
             int i, j;
 
             //find place to start
@@ -600,7 +594,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                   j--) { }
 
             //swap values i-1, j-1
-            int c = vertices[i - 1].PermutationIndex;
+            var c = vertices[i - 1].PermutationIndex;
             vertices[i - 1].PermutationIndex = vertices[j - 1].PermutationIndex;
             vertices[j - 1].PermutationIndex = c;
 
@@ -625,7 +619,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             #region Sort by Second ASC
             var radixBySecond = new List<CrossCounterPair>[secondLayerVertexCount];
             List<CrossCounterPair> r;
-            int pairCount = 0;
+            var pairCount = 0;
             foreach (var pair in pairs)
             {
                 //get the radix where the pair should be inserted
@@ -667,19 +661,19 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             //
             // Build the accumulator tree
             //
-            int firstIndex = 1;
+            var firstIndex = 1;
             while (firstIndex < pairCount)
                 firstIndex *= 2;
-            int treeSize = 2 * firstIndex - 1;
+            var treeSize = 2 * firstIndex - 1;
             firstIndex -= 1;
-            CrossCounterTreeNode[] tree = new CrossCounterTreeNode[treeSize];
-            for (int i = 0; i < treeSize; i++)
+            var tree = new CrossCounterTreeNode[treeSize];
+            for (var i = 0; i < treeSize; i++)
                 tree[i] = new CrossCounterTreeNode();
 
             //
             // Count the crossings
             //
-            int crossCount = 0;
+            var crossCount = 0;
             int index;
             foreach (var list in radixByFirst)
             {
@@ -749,7 +743,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         private static Queue<VertexGroup> GetContainerLikeItems(AlternatingLayer alternatingLayer, VertexTypes containerLikeVertexType)
         {
-            Queue<VertexGroup> queue = new Queue<VertexGroup>();
+            var queue = new Queue<VertexGroup>();
             foreach (var item in alternatingLayer)
             {
                 var vertex = item as SugiVertex;
@@ -779,12 +773,12 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                 qVertices.Add(vertex);
             }
 
-            for (int i = 0; i < alternatingLayer.Count; i++)
+            for (var i = 0; i < alternatingLayer.Count; i++)
             {
                 var segmentContainer = alternatingLayer[i] as SegmentContainer;
                 if (segmentContainer == null)
                     continue;
-                for (int j = 0; j < segmentContainer.Count; j++)
+                for (var j = 0; j < segmentContainer.Count; j++)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -794,8 +788,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                         continue;
 
                     alternatingLayer.RemoveAt(i);
-                    ISegmentContainer sc1, sc2;
-                    segmentContainer.Split(segment, out sc1, out sc2);
+                    segmentContainer.Split(segment, out var sc1, out var sc2);
                     sc1.Position = segmentContainer.Position;
                     sc2.Position = segmentContainer.Position + sc1.Count + 1;
                     alternatingLayer.Insert(i, sc1);
@@ -816,7 +809,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private void AppendSegmentsToAlternatingLayer(AlternatingLayer alternatingLayer, bool straightSweep)
         {
             var type = straightSweep ? VertexTypes.PVertex : VertexTypes.QVertex;
-            for (int i = 1; i < alternatingLayer.Count; i += 2)
+            for (var i = 1; i < alternatingLayer.Count; i += 2)
             {
                 var vertex = alternatingLayer[i] as SugiVertex;
                 if (vertex.Type == type)
@@ -863,9 +856,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                 {
                     vertexStack.Pop();
                     segmentContainerStack.Pop();
-                    int k = (int)Math.Ceiling(vertex.MeasuredPosition - segmentContainer.Position);
-                    ISegmentContainer sc1, sc2;
-                    segmentContainer.Split(k, out sc1, out sc2);
+                    var k = (int)Math.Ceiling(vertex.MeasuredPosition - segmentContainer.Position);
+                    segmentContainer.Split(k, out var sc1, out var sc2);
                     newAlternatingLayer.Add(sc1);
                     newAlternatingLayer.Add(vertex);
                     sc2.Position = segmentContainer.Position + k;
@@ -888,7 +880,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private static void AssignPositionsOnActualLayer(AlternatingLayer alternatingLayer)
         {
             //assign positions to vertices on the actualLayer (L_i)
-            for (int i = 1; i < alternatingLayer.Count; i += 2)
+            for (var i = 1; i < alternatingLayer.Count; i += 2)
             {
                 var precedingContainer = alternatingLayer[i - 1] as SegmentContainer;
                 var vertex = alternatingLayer[i] as SugiVertex;
@@ -904,7 +896,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             }
 
             //assign positions to containers on the actualLayer (L_i+1)
-            for (int i = 0; i < alternatingLayer.Count; i += 2)
+            for (var i = 0; i < alternatingLayer.Count; i += 2)
             {
                 var container = alternatingLayer[i] as SegmentContainer;
                 if (i == 0)
@@ -933,7 +925,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                 var oldMeasuredPosition = vertex.MeasuredPosition;
                 vertex.MeasuredPosition = 0;
                 vertex.DoNotOpt = false;
-                int count = 0;
+                var count = 0;
                 foreach (var edge in edges)
                 {
                     cancellationToken.ThrowIfCancellationRequested();

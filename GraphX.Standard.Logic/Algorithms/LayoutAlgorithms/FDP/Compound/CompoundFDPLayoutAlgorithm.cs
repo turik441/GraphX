@@ -54,10 +54,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         /// Indicates whether the removed tree-node 
         /// has been grown back or not.
         /// </summary>
-        private bool _allTreesGrown
-        {
-            get { return _removedRootTreeNodeLevels.Count == 0; }
-        }
+        private bool _allTreesGrown => _removedRootTreeNodeLevels.Count == 0;
 
         /// <summary>
         /// Grows back a tree-node level in every 'treeGrowingStep'th step.
@@ -208,7 +205,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             {
                 _removedRootTreeNodes.Remove(tnd.Vertex);
                 _removedRootTreeEdges.Remove(tnd.Edge);
-                _levels[0].Add(tnd.Vertex);
+                Levels[0].Add(tnd.Vertex);
                 _compoundGraph.AddVertex(tnd.Vertex);
                 _compoundGraph.AddEdge(tnd.Edge);
 
@@ -327,14 +324,14 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private void ApplyRepulsionForces(CancellationToken cancellationToken, Random rnd)
         {
             var repulsionRange = Parameters.IdealEdgeLength * Parameters.SeparationMultiplier;
-            for (var i = _levels.Count - 1; i >= 0; i--)
+            for (var i = Levels.Count - 1; i >= 0; i--)
             {
                 var checkedVertices = new HashSet<TVertex>();
-                foreach (var uVertex in _levels[i])
+                foreach (var uVertex in Levels[i])
                 {
                     checkedVertices.Add(uVertex);
                     var u = _vertexDatas[uVertex];
-                    foreach (var vVertex in _levels[i])
+                    foreach (var vVertex in Levels[i])
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
@@ -363,9 +360,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         /// </summary>
         private void ApplyGravitationForces(CancellationToken cancellationToken)
         {
-            for (var i = _levels.Count - 1; i >= 0; i--)
+            for (var i = Levels.Count - 1; i >= 0; i--)
             {
-                foreach (var uVertex in _levels[i])
+                foreach (var uVertex in Levels[i])
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -393,9 +390,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         private void CalcNodePositionsAndSizes(CancellationToken cancellationToken)
         {
-            for (var i = _levels.Count - 1; i >= 0; i--)
+            for (var i = Levels.Count - 1; i >= 0; i--)
             {
-                foreach (var uVertex in _levels[i])
+                foreach (var uVertex in Levels[i])
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 

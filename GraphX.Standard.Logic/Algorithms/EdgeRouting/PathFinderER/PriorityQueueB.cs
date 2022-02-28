@@ -54,10 +54,8 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         #region Methods
         protected void SwitchElements(int i, int j)
 		{
-			T h = InnerList[i];
-			InnerList[i] = InnerList[j];
-			InnerList[j] = h;
-		}
+			(InnerList[i], InnerList[j]) = (InnerList[j], InnerList[i]);
+        }
 
         protected virtual int OnCompare(int i, int j)
         {
@@ -95,7 +93,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 		/// <returns>The smallest object</returns>
 		public T Pop()
 		{
-			T result = InnerList[0];
+			var result = InnerList[0];
 			int p = 0,p1,p2,pn;
 			InnerList[0] = InnerList[InnerList.Count-1];
 			InnerList.RemoveAt(InnerList.Count-1);
@@ -164,27 +162,19 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 		/// Get the smallest object without removing it.
 		/// </summary>
 		/// <returns>The smallest object</returns>
-		public T Peek()
-		{
-			if(InnerList.Count>0)
-				return InnerList[0];
-			return default(T);
-		}
+		public T Peek() => InnerList.Count>0 ? InnerList[0] : default(T);
 
-		public void Clear()
+        public void Clear()
 		{
 			InnerList.Clear();
 		}
 
-		public int Count
-		{
-			get{ return InnerList.Count; }
-		}
+		public int Count => InnerList.Count;
 
         public void RemoveLocation(T item)
         {
-            int index = -1;
-            for(int i=0; i<InnerList.Count; i++)
+            var index = -1;
+            for(var i=0; i<InnerList.Count; i++)
             {
                 
                 if (mComparer.Compare(InnerList[i], item) == 0)
@@ -197,7 +187,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 
         public T this[int index]
         {
-            get { return InnerList[index]; }
+            get => InnerList[index];
             set 
             { 
                 InnerList[index] = value;

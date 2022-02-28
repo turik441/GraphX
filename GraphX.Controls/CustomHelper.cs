@@ -18,15 +18,9 @@ namespace GraphX.Controls
 {
     public static class CustomHelper
     {
-        public static bool IsIntegerInput(string text)
-        {
-            return text != "\r" && new Regex("[^0-9]+").IsMatch(text);
-        }
+        public static bool IsIntegerInput(string text) => text != "\r" && new Regex("[^0-9]+").IsMatch(text);
 
-        public static bool IsDoubleInput(string text)
-        {
-            return text != "\r" && new Regex("[^0-9.]+").IsMatch(text);
-        }
+        public static bool IsDoubleInput(string text) => text != "\r" && new Regex("[^0-9.]+").IsMatch(text);
 
         public static ScaleTransform GetScaleTransform(FrameworkElement target)
         {
@@ -54,7 +48,7 @@ namespace GraphX.Controls
             }
 
             var childCount = VisualTreeHelper.GetChildrenCount(element);
-            for (int i = 0; i < childCount; i++)
+            for (var i = 0; i < childCount; i++)
             {
                 var result = (VisualTreeHelper.GetChild(element, i) as FrameworkElement).FindDescendantByName(name);
                 if (result != null) { return result; }

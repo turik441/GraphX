@@ -109,8 +109,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 					var oldEnergy = GetEnergy( i, quadTree );
 
 					// compute direction of the move of the node
-					Vector bestDir;
-					GetDirection( i, quadTree, out bestDir );
+                    GetDirection( i, quadTree, out var bestDir );
 
 					// line search: compute length of the move
 					var oldPos = v.Position;

@@ -60,13 +60,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private readonly IDictionary<TVertex, IList<TVertex>> _childrenRegistry =
             new Dictionary<TVertex, IList<TVertex>>();
 
-        public IEnumerable<TVertex> CompoundVertices
-        {
-            get
-            {
-                return _childrenRegistry.Keys;
-            }
-        }
+        public IEnumerable<TVertex> CompoundVertices => _childrenRegistry.Keys;
 
         public IEnumerable<TVertex> SimpleVertices
         {
@@ -75,8 +69,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         private IList<TVertex> GetChildrenList(TVertex vertex, bool createIfNotExists)
         {
-            IList<TVertex> childrenList;
-            if (_childrenRegistry.TryGetValue(vertex, out childrenList) || !createIfNotExists)
+            if (_childrenRegistry.TryGetValue(vertex, out var childrenList) || !createIfNotExists)
                 return childrenList;
 
             childrenList = new List<TVertex>();
@@ -97,8 +90,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         public int AddChildVertexRange(TVertex parent, IEnumerable<TVertex> children)
         {
-            int ret = AddVertexRange(children);
-            IList<TVertex> childrenList = GetChildrenList(parent, true);
+            var ret = AddVertexRange(children);
+            var childrenList = GetChildrenList(parent, true);
             foreach (var v in children)
             {
                 _parentRegistry[v] = parent;
@@ -109,8 +102,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         public TVertex GetParent(TVertex vertex)
         {
-            TVertex parent;
-            if (_parentRegistry.TryGetValue(vertex, out parent))
+            if (_parentRegistry.TryGetValue(vertex, out var parent))
                 return parent;
 
             return default(TVertex);
@@ -128,7 +120,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         public int GetChildrenCount(TVertex vertex)
         {
-            IList<TVertex> childrenList = GetChildrenList(vertex, false);
+            var childrenList = GetChildrenList(vertex, false);
             if (childrenList == null)
                 return 0;
 
@@ -144,7 +136,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         public override bool RemoveVertex(TVertex v)
         {
-            bool removed = base.RemoveVertex(v);
+            var removed = base.RemoveVertex(v);
             if (removed)
             {
                 _parentRegistry.Remove(v);

@@ -29,9 +29,6 @@ namespace GraphX.Common.Models
         /// </summary>
         public long ID { get; set; }
 
-        public bool Equals(IGraphXVertex other)
-        {
-            return Equals(this, other);
-        }
+        public bool Equals(IGraphXVertex other) => Equals(this, other);
     }
 }

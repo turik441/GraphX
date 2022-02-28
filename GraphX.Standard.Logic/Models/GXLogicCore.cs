@@ -50,8 +50,8 @@ namespace GraphX.Logic.Models
         /// <summary>
         /// Gets is LayoutAlgorithmTypeEnum.Custom (NOT external) layout selected and used. Custom layout used to manualy generate graph.
         /// </summary>
-        public bool IsCustomLayout { get { return DefaultLayoutAlgorithm == LayoutAlgorithmTypeEnum.Custom && ExternalLayoutAlgorithm == null; } }
-        
+        public bool IsCustomLayout => DefaultLayoutAlgorithm == LayoutAlgorithmTypeEnum.Custom && ExternalLayoutAlgorithm == null;
+
         /// <summary>
         /// Gets or sets external layout algorithm that will be used instead of the default one.
         /// Negates DefaultLayoutAlgorithm property value if set.
@@ -75,7 +75,8 @@ namespace GraphX.Logic.Models
         /// Gets or sets default layout algorithm that will be used on graph generation/relayouting
         /// </summary>
         public LayoutAlgorithmTypeEnum DefaultLayoutAlgorithm { 
-            get { return _defaultLayoutAlgorithm; } set { _defaultLayoutAlgorithm = value; SetDefaultParams(0); } 
+            get => _defaultLayoutAlgorithm;
+            set { _defaultLayoutAlgorithm = value; SetDefaultParams(0); } 
         }
 
         private OverlapRemovalAlgorithmTypeEnum _defaultOverlapRemovalAlgorithm;
@@ -83,7 +84,7 @@ namespace GraphX.Logic.Models
         /// Gets or sets default overlap removal algorithm that will be used on graph generation/relayouting
         /// </summary>
         public OverlapRemovalAlgorithmTypeEnum DefaultOverlapRemovalAlgorithm {
-            get { return _defaultOverlapRemovalAlgorithm; }
+            get => _defaultOverlapRemovalAlgorithm;
             set { _defaultOverlapRemovalAlgorithm = value; SetDefaultParams(1);}
         }
 
@@ -92,7 +93,8 @@ namespace GraphX.Logic.Models
         /// Gets or sets default edge routing algorithm that will be used on graph generation/relayouting
         /// </summary>
         public EdgeRoutingAlgorithmTypeEnum DefaultEdgeRoutingAlgorithm { 
-            get { return _defaultEdgeRoutingAlgorithm; } set { _defaultEdgeRoutingAlgorithm = value; SetDefaultParams(2); } }
+            get => _defaultEdgeRoutingAlgorithm;
+            set { _defaultEdgeRoutingAlgorithm = value; SetDefaultParams(2); } }
 
         /// <summary>
         /// Gets or sets default layout algorithm parameters that will be used on graph generation/relayouting
@@ -127,7 +129,7 @@ namespace GraphX.Logic.Models
         /// <param name="clearStorages">Also clear storages data</param>
         public void Clear(bool clearStorages = true)
         {
-            _graph?.Clear();
+            Graph?.Clear();
             OriginalGraph?.Clear();
             if (clearStorages)
                 CreateNewAlgorithmStorage(null, null, null);
@@ -138,7 +140,7 @@ namespace GraphX.Logic.Models
         /// </summary>
         public void PushFilters()
         {
-            int i = 0;
+            var i = 0;
             IsFilterRemoved = false;
             //remember original graph if we're about to start filtering
             if (Filters.Count > 0 && !IsFiltered)
@@ -223,15 +225,10 @@ namespace GraphX.Logic.Models
         /// </summary>
         public double EdgeCurvingTolerance { get; set; }
 
-        private TGraph _graph;
         /// <summary>
         /// Gets or sets main graph object. Updating this property also updates OriginalGraph property.
         /// </summary>
-        public TGraph Graph
-        {
-            get { return _graph; }
-            set { _graph = value; }
-        }
+        public TGraph Graph { get; set; }
 
         /// <summary>
         /// Gets unmodified graph before any filters has been applied
@@ -253,13 +250,8 @@ namespace GraphX.Logic.Models
         /// <summary>
         /// Gets if edge routing will be performed on Compute() method execution
         /// </summary>
-        public bool IsEdgeRoutingEnabled
-        {
-            get
-            {
-                return (ExternalEdgeRoutingAlgorithm == null && DefaultEdgeRoutingAlgorithm != EdgeRoutingAlgorithmTypeEnum.None) || ExternalEdgeRoutingAlgorithm != null;
-            }
-        }
+        public bool IsEdgeRoutingEnabled => (ExternalEdgeRoutingAlgorithm == null && DefaultEdgeRoutingAlgorithm != EdgeRoutingAlgorithmTypeEnum.None) || ExternalEdgeRoutingAlgorithm != null;
+
         #endregion
         #endregion
 
@@ -352,10 +344,9 @@ namespace GraphX.Logic.Models
             if (vertexSizes == null || positions == null)
                 throw new GX_InvalidDataException("GetVertexSizeRectangles() -> Vertex sizes or positions not set!");
             var rectangles = new Dictionary<TVertex, Rect>();
-            foreach (var vertex in _graph.Vertices.Where(a => a.SkipProcessing != ProcessingOptionEnum.Exclude))
+            foreach (var vertex in Graph.Vertices.Where(a => a.SkipProcessing != ProcessingOptionEnum.Exclude))
             {
-                Point position; Size size;
-                if (!positions.TryGetValue(vertex, out position) || !vertexSizes.TryGetValue(vertex, out size)) continue;
+                if (!positions.TryGetValue(vertex, out var position) || !vertexSizes.TryGetValue(vertex, out var size)) continue;
                 if (!getCenterPoints) rectangles[vertex] = new Rect(position.X, position.Y, size.Width, size.Height);
                 else rectangles[vertex] = new Rect(position.X - size.Width * (float)0.5, position.Y - size.Height * (float)0.5, size.Width, size.Height);
             }

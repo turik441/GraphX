@@ -15,21 +15,17 @@ namespace GraphX.Logic.Algorithms
 
 	public class TypedEdge<TVertex> : Edge<TVertex>, ITypedEdge
 	{
-		private readonly EdgeTypes _type;
-		public EdgeTypes Type
-		{
-			get { return _type; }
-		}
+        public EdgeTypes Type { get; }
 
-		public TypedEdge(TVertex source, TVertex target, EdgeTypes type)
+        public TypedEdge(TVertex source, TVertex target, EdgeTypes type)
 			: base(source, target)
 		{
-			_type = type;
+			Type = type;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}: {1}-->{2}", _type, Source, Target);
+			return string.Format("{0}: {1}-->{2}", Type, Source, Target);
 		}
 	}
 }

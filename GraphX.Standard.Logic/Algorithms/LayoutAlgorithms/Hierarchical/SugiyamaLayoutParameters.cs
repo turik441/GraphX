@@ -46,8 +46,8 @@
 		/// </summary>
 		public float HorizontalGap
 		{
-			get { return Horizontalgap; }
-			set
+			get => Horizontalgap;
+            set
 			{
 				if ( Horizontalgap != value )
 				{
@@ -59,8 +59,8 @@
 
 		public float MaxWidth
 		{
-			get { return _maxWidth; }
-			set
+			get => _maxWidth;
+            set
 			{
 				if ( _maxWidth != value )
 				{
@@ -72,8 +72,8 @@
 
 		public bool BaryCenteringByPosition
 		{
-			get { return _baryCenteringByPosition; }
-			set
+			get => _baryCenteringByPosition;
+            set
 			{
 				if ( _baryCenteringByPosition != value )
 				{
@@ -88,8 +88,8 @@
 		/// </summary>
 		public float VerticalGap
 		{
-			get { return Verticalgap; }
-			set
+			get => Verticalgap;
+            set
 			{
 				if ( Verticalgap != value )
 				{
@@ -105,8 +105,8 @@
 		/// </summary>
 		public bool DirtyRound
 		{
-			get { return _dirty; }
-			set
+			get => _dirty;
+            set
 			{
 				if ( _dirty != value )
 				{
@@ -121,8 +121,8 @@
 		/// </summary>
 		public int Phase1IterationCount
 		{
-			get { return _phase1IterationCount; }
-			set
+			get => _phase1IterationCount;
+            set
 			{
 				if ( _phase1IterationCount != value )
 				{
@@ -137,8 +137,8 @@
 		/// </summary>
 		public int Phase2IterationCount
 		{
-			get { return _phase2IterationCount; }
-			set
+			get => _phase2IterationCount;
+            set
 			{
 				if ( _phase2IterationCount != value )
 				{
@@ -150,8 +150,8 @@
 
 		public bool MinimizeHierarchicalEdgeLong
 		{
-			get { return _minimizeHierarchicalEdgeLong; }
-			set
+			get => _minimizeHierarchicalEdgeLong;
+            set
 			{
 				if ( _minimizeHierarchicalEdgeLong != value )
 				{
@@ -163,8 +163,8 @@
 
 		public PositionCalculationMethodTypes PositionCalculationMethod
 		{
-			get { return _positionCalculationMethod; }
-			set
+			get => _positionCalculationMethod;
+            set
 			{
 				if ( value != _positionCalculationMethod )
 				{
@@ -182,8 +182,8 @@
 		/// </summary>
 		public bool Simplify
 		{
-			get { return _simplify; }
-			set
+			get => _simplify;
+            set
 			{
 				if ( _simplify != value )
 				{
@@ -198,8 +198,8 @@
 		/// </summary>
 		public PromptingConstraintType Prompting
 		{
-			get { return _promptingConstraint; }
-			set
+			get => _promptingConstraint;
+            set
 			{
 				if ( _promptingConstraint != value )
 				{

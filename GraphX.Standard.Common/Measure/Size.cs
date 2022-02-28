@@ -6,7 +6,7 @@ namespace GraphX.Measure
     public struct Size
     {
         internal double _width;
-        public double Width { get { return _width; } 
+        public double Width { get => _width;
             set 
             {
                 if (IsEmpty)
@@ -16,7 +16,7 @@ namespace GraphX.Measure
                 _width = value; 
             } }
         internal double _height;
-        public double Height { get { return _height; } 
+        public double Height { get => _height;
             set 
             {
                 if (IsEmpty)
@@ -28,8 +28,8 @@ namespace GraphX.Measure
             } }
 
         private static readonly Size SEmpty;
-        public static Size Empty { get { return SEmpty; } }
-        public bool IsEmpty { get { return (_width < 0.0); } }
+        public static Size Empty => SEmpty;
+        public bool IsEmpty => (_width < 0.0);
 
         public Size(double width, double height) 
         {
@@ -85,9 +85,7 @@ namespace GraphX.Measure
 
         public override bool Equals(object o)
         {
-            if (!(o is Size))
-                return false;
-            return Equals(this, (Size)o);
+            return o is Size size && Equals(this, size);
         }
 
         public bool Equals(Size value)

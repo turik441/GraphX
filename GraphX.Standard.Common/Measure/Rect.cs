@@ -9,18 +9,19 @@ namespace GraphX.Measure
     [DebuggerDisplay("Size={X} {Y} {Width} {Height}")]
     public struct Rect
     {
-        internal double _x;
-        internal double _y;
-        public double X { get { return _x; } set { _x = value; } }
-        public double Y { get { return _y; } set { _y = value; } }
+        public double X { get; set; }
 
-        public double Left { get { return _x; } }
-        public double Top { get { return _y; } }
-        public double Bottom { get { if (IsEmpty) return double.NegativeInfinity; return (_y + _height); } }
-        public double Right { get { if (IsEmpty) return double.NegativeInfinity; return (_x + _width); } }
+        public double Y { get; set; }
+
+        public double Left => X;
+        public double Top => Y;
+        public double Bottom { get { if (IsEmpty) return double.NegativeInfinity; return Y + _height; } }
+        public double Right { get { if (IsEmpty) return double.NegativeInfinity; return X + _width; } }
 
         internal double _width;
-        public double Width { get { return _width; } 
+        public double Width 
+        {
+            get => _width;
             set {
                 if (IsEmpty)
                     throw new InvalidOperationException("Rect_CannotModifyEmptyRect");
@@ -30,7 +31,7 @@ namespace GraphX.Measure
             }
         }
         internal double _height;
-        public double Height { get { return _height; } 
+        public double Height { get => _height;
             set {
                 if (IsEmpty)
                     throw new InvalidOperationException("Rect_CannotModifyEmptyRect");
@@ -39,43 +40,33 @@ namespace GraphX.Measure
                 _height = value;
             } }
 
-        public Point BottomLeft { get { return new Point(_x, Bottom); } }
-        public Point TopLeft { get { return new Point(_x, _y); } }
-        public Point TopRight { get { return new Point(Right, _y); } }
-        public Point BottomRight { get { return new Point(Right, Bottom); } }
+        public Point BottomLeft => new Point(X, Bottom);
+        public Point TopLeft => new Point(X, Y);
+        public Point TopRight => new Point(Right, Y);
+        public Point BottomRight => new Point(Right, Bottom);
 
-        private static readonly Rect SEmpty;
-        public static Rect Empty { get { return SEmpty; } }
-        public bool IsEmpty { get { return (_width < 0.0); } }
+        public static Rect Empty { get; }
+
+        public bool IsEmpty => _width < 0.0;
 
         public Point Location
         {
-            get
-            {
-                return new Point(_x, _y);
-            }
+            get => new Point(X, Y);
             set
             {
                 if (IsEmpty)
                 {
-                    _x = 0;
-                    _y = 0;
+                    X = 0;
+                    Y = 0;
                     return;                    
                 }
-                _x = value._x;
-                _y = value._y;
+                X = value.X;
+                Y = value.Y;
             }
         }
         public Size Size
         {
-            get
-            {
-                if (IsEmpty)
-                {
-                    return Size.Empty;
-                }
-                return new Size(_width, _height);
-            }
+            get => IsEmpty ? Size.Empty : new Size(_width, _height);
             set
             {
                 if (value.IsEmpty)
@@ -102,15 +93,15 @@ namespace GraphX.Measure
         {
             if (size.IsEmpty)
             {
-                _x = 0;
-                _y = 0;
+                X = 0;
+                Y = 0;
                 _width = 0;
                 _height = 0;
             }
             else
             {
-                _x = location._x;
-                _y = location._y;
+                X = location.X;
+                Y = location.Y;
                 _width = size._width;
                 _height = size._height;
             }
@@ -118,22 +109,22 @@ namespace GraphX.Measure
 
         public Rect(double x, double y, double width, double height)
         {
-            if ((width < 0.0) || (height < 0.0))
+            if (width < 0.0 || height < 0.0)
             {
                 throw new ArgumentException("Size_WidthAndHeightCannotBeNegative");
             }
-            _x = x;
-            _y = y;
+            X = x;
+            Y = y;
             _width = width;
             _height = height;
         }
 
         public Rect(Point point1, Point point2)
         {
-            _x = Math.Min(point1._x, point2._x);
-            _y = Math.Min(point1._y, point2._y);
-            _width = Math.Max(Math.Max(point1._x, point2._x) - _x, 0);
-            _height = Math.Max(Math.Max(point1._y, point2._y) - _y, 0);
+            X = Math.Min(point1.X, point2.X);
+            Y = Math.Min(point1.Y, point2.Y);
+            _width = Math.Max(Math.Max(point1.X, point2.X) - X, 0);
+            _height = Math.Max(Math.Max(point1.Y, point2.Y) - Y, 0);
         }
 
         public Rect(Point point, Vector vector)
@@ -145,14 +136,14 @@ namespace GraphX.Measure
         {
             if (size.IsEmpty)
             {
-                _x = 0;
-                _y = 0;
+                X = 0;
+                Y = 0;
                 _width = 0;
                 _height = 0;
             }
             else
             {
-                _x = _y = 0.0;
+                X = Y = 0.0;
                 _width = size.Width;
                 _height = size.Height;
             }
@@ -178,14 +169,12 @@ namespace GraphX.Measure
             {
                 return rect2.IsEmpty;
             }
-            return (((rect1.X.Equals(rect2.X) && rect1.Y.Equals(rect2.Y)) && rect1.Width.Equals(rect2.Width)) && rect1.Height.Equals(rect2.Height));
+            return rect1.X.Equals(rect2.X) && rect1.Y.Equals(rect2.Y) && rect1.Width.Equals(rect2.Width) && rect1.Height.Equals(rect2.Height);
         }
 
         public override bool Equals(object o)
         {
-            if (!(o is Rect))
-                return false;
-            return Equals(this, (Rect)o);
+            return o is Rect rect && Equals(this, rect);
         }
 
         public bool Equals(Rect value)
@@ -199,7 +188,7 @@ namespace GraphX.Measure
             {
                 return 0;
             }
-            return (((X.GetHashCode() ^ Y.GetHashCode()) ^ Width.GetHashCode()) ^ Height.GetHashCode());
+            return X.GetHashCode() ^ Y.GetHashCode() ^ Width.GetHashCode() ^ Height.GetHashCode();
         }
 
         public void Offset(Vector offsetVector)
@@ -208,8 +197,8 @@ namespace GraphX.Measure
             {
                 throw new InvalidOperationException("Rect_CannotCallMethod");
             }
-            _x += offsetVector._x;
-            _y += offsetVector._y;
+            X += offsetVector.X;
+            Y += offsetVector.Y;
         }
 
         public void Offset(double offsetX, double offsetY)
@@ -218,8 +207,8 @@ namespace GraphX.Measure
             {
                 throw new InvalidOperationException("Rect_CannotCallMethod");
             }
-            _x += offsetX;
-            _y += offsetY;
+            X += offsetX;
+            Y += offsetY;
         }
 
         public static Rect Offset(Rect rect, Vector offsetVector)
@@ -240,15 +229,15 @@ namespace GraphX.Measure
             {
                 return false;
             }
-            return ((((rect.Left <= Right) && (rect.Right >= Left)) && (rect.Top <= Bottom)) && (rect.Bottom >= Top));
+            return rect.Left <= Right && rect.Right >= Left && rect.Top <= Bottom && rect.Bottom >= Top;
         }
 
         public void Intersect(Rect rect)
         {
             if (!IntersectsWith(rect))
             {
-                _x = 0;
-                _y = 0;
+                X = 0;
+                Y = 0;
                 _width = 0;
                 _height = 0;
             }
@@ -258,8 +247,8 @@ namespace GraphX.Measure
                 var num = Math.Max(Top, rect.Top);
                 _width = Math.Max(Math.Min(Right, rect.Right) - num2, 0.0);
                 _height = Math.Max(Math.Min(Bottom, rect.Bottom) - num, 0.0);
-                _x = num2;
-                _y = num;
+                X = num2;
+                Y = num;
             }
         }
 
@@ -273,8 +262,8 @@ namespace GraphX.Measure
         {
             if (IsEmpty)
             {
-                _x = 0;
-                _y = 0;
+                X = 0;
+                Y = 0;
                 _width = 0;
                 _height = 0;
             }
@@ -282,7 +271,7 @@ namespace GraphX.Measure
             {
                 double num2 = Math.Min(Left, rect.Left);
                 double num = Math.Min(Top, rect.Top);
-                if ((rect.Width == double.PositiveInfinity) || (Width == double.PositiveInfinity))
+                if (rect.Width == double.PositiveInfinity || Width == double.PositiveInfinity)
                 {
                     _width = double.PositiveInfinity;
                 }
@@ -291,7 +280,7 @@ namespace GraphX.Measure
                     double num4 = Math.Max(Right, rect.Right);
                     _width = Math.Max(num4 - num2, 0.0);
                 }
-                if ((rect.Height == double.PositiveInfinity) || (Height == double.PositiveInfinity))
+                if (rect.Height == double.PositiveInfinity || Height == double.PositiveInfinity)
                 {
                     _height = double.PositiveInfinity;
                 }
@@ -300,8 +289,8 @@ namespace GraphX.Measure
                     double num3 = Math.Max(Bottom, rect.Bottom);
                     _height = Math.Max(num3 - num, 0.0);
                 }
-                _x = num2;
-                _y = num;
+                X = num2;
+                Y = num;
             }
         }
 
@@ -322,19 +311,9 @@ namespace GraphX.Measure
             return rect;
         }
 
-        public bool Contains(Point point)
-        {
-            return Contains(point._x, point._y);
-        }
+        public bool Contains(Point point) => Contains(point.X, point.Y);
 
-        public bool Contains(double x, double y)
-        {
-            if (IsEmpty)
-            {
-                return false;
-            }
-            return ContainsInternal(x, y);
-        }
+        public bool Contains(double x, double y) => !IsEmpty && ContainsInternal(x, y);
 
         public bool Contains(Rect rect)
         {
@@ -342,22 +321,22 @@ namespace GraphX.Measure
             {
                 return false;
             }
-            return ((((_x <= rect._x) && (_y <= rect._y)) && ((_x + _width) >= (rect._x + rect._width))) && ((_y + _height) >= (rect._y + rect._height)));
+            return X <= rect.X && Y <= rect.Y && X + _width >= rect.X + rect._width && Y + _height >= rect.Y + rect._height;
         }
 
         private bool ContainsInternal(double x, double y)
         {
-            return ((((x >= _x) && ((x - _width) <= _x)) && (y >= _y)) && ((y - _height) <= _y));
+            return x >= X && x - _width <= X && y >= Y && y - _height <= Y;
         }
 
         private static Rect CreateEmptyRect()
         {
-            return new Rect() { _x = double.PositiveInfinity, _y = double.PositiveInfinity, _width = double.NegativeInfinity, _height = double.NegativeInfinity };
+            return new Rect() { X = double.PositiveInfinity, Y = double.PositiveInfinity, _width = double.NegativeInfinity, _height = double.NegativeInfinity };
         }
 
         static Rect()
         {
-            SEmpty = CreateEmptyRect();
+            Empty = CreateEmptyRect();
         }
 
         public void Inflate(Size size)
@@ -371,19 +350,17 @@ namespace GraphX.Measure
             {
                 throw new InvalidOperationException("Rect_CannotCallMethod");
             }
-            _x -= width;
-            _y -= height;
+            X -= width;
+            Y -= height;
             _width += width;
             _width += width;
             _height += height;
             _height += height;
-            if ((_width < 0.0) || (_height < 0.0))
-            {
-                _x = 0;
-                _y = 0;
-                _width = 0;
-                _height = 0;
-            }
+            if (!(_width < 0.0) && !(_height < 0.0)) return;
+            X = 0;
+            Y = 0;
+            _width = 0;
+            _height = 0;
         }
 
         public static Rect Inflate(Rect rect, Size size)
@@ -395,7 +372,7 @@ namespace GraphX.Measure
 
         public static Rect InflateNew(Rect rect, double width, double height)
         {
-            var r = new Rect(rect._x, rect._y, rect._width, rect._height);
+            var r = new Rect(rect.X, rect.Y, rect._width, rect._height);
             r.Inflate(width, height);
             return r;
         }

@@ -62,28 +62,28 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         {
             //get the average width and height
             double sumWidth = 0, sumHeight = 0;
-            foreach (var vertex in _levels[0])
+            foreach (var vertex in Levels[0])
             {
                 var v = _vertexDatas[vertex];
                 sumWidth += v.Size.Width;
                 sumHeight += v.Size.Height;
             }
-            if (_levels[0].Count > 0)
-                _gravityForceMagnitude = Math.Min(sumWidth, sumHeight) / _levels[0].Count;
+            if (Levels[0].Count > 0)
+                _gravityForceMagnitude = Math.Min(sumWidth, sumHeight) / Levels[0].Count;
         }
 
         private void RemoveTreeNodesFromRootGraph()
         {
-            bool removed = true;
-            for (int i = 0; removed; i++)
+            var removed = true;
+            for (var i = 0; removed; i++)
             {
                 removed = false;
-                foreach (var vertex in _levels[0])
+                foreach (var vertex in Levels[0])
                 {
                     if (_compoundGraph.Degree(vertex) != 1 || _compoundGraph.IsCompoundVertex(vertex))
                         continue;
 
-                    TEdge edge = default(TEdge);
+                    var edge = default(TEdge);
                     if (_compoundGraph.InDegree(vertex) > 0)
                         edge = _compoundGraph.InEdge(vertex, 0);
                     else
@@ -106,7 +106,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                     //remove from the level
                     foreach (var tnd in _removedRootTreeNodeLevels.Peek())
                     {
-                        _levels[0].Remove(tnd.Vertex);
+                        Levels[0].Remove(tnd.Vertex);
 
                         //remove the vertex from the graph
                         _compoundGraph.RemoveEdge(tnd.Edge);
@@ -123,14 +123,14 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                 var fixedLayoutedCompoundVertex = movableParentUpdateQueue.Dequeue();
 
                 //find the not fixed predecessor
-                TVertex movableVertex = fixedLayoutedCompoundVertex;
+                var movableVertex = fixedLayoutedCompoundVertex;
                 for (; ; )
                 {
                     //if the vertex hasn't parent
                     if (movableVertex == null)
                         break;
 
-                    TVertex parent = _compoundGraph.GetParent(movableVertex);
+                    var parent = _compoundGraph.GetParent(movableVertex);
                     if (parent == null)
                         break;
 
@@ -161,11 +161,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         {
             foreach (var vertex in _compoundGraph.SimpleVertices)
             {
-                Size vertexSize;
-                vertexSizes.TryGetValue(vertex, out vertexSize);
+                vertexSizes.TryGetValue(vertex, out var vertexSize);
 
-                var position = new Point();
-                VertexPositions.TryGetValue(vertex, out position);
+                VertexPositions.TryGetValue(vertex, out var position);
 
                 //create the information container for this simple vertex
                 var dataContainer = new SimpleVertexData(vertex, _rootCompoundVertex, false, position, vertexSize);
@@ -190,19 +188,17 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             IDictionary<TVertex, CompoundVertexInnerLayoutType> layoutTypes,
             Queue<TVertex> movableParentUpdateQueue)
         {
-            for (int i = _levels.Count - 1; i >= 0; i--)
+            for (var i = Levels.Count - 1; i >= 0; i--)
             {
-                foreach (var vertex in _levels[i])
+                foreach (var vertex in Levels[i])
                 {
                     if (!_compoundGraph.IsCompoundVertex(vertex))
                         continue;
 
                     //get the data of the vertex
-                    Thickness border;
-                    vertexBorders.TryGetValue(vertex, out border);
+                    vertexBorders.TryGetValue(vertex, out var border);
 
-                    Size vertexSize;
-                    vertexSizes.TryGetValue(vertex, out vertexSize);
+                    vertexSizes.TryGetValue(vertex, out var vertexSize);
                     var layoutType = CompoundVertexInnerLayoutType.Automatic;
                     layoutTypes.TryGetValue(vertex, out layoutType);
 
@@ -211,8 +207,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                         movableParentUpdateQueue.Enqueue(vertex);
                     }
 
-                    var position = new Point();
-                    VertexPositions.TryGetValue(vertex, out position);
+                    VertexPositions.TryGetValue(vertex, out var position);
 
                     //create the information container for this compound vertex
                     var dataContainer = new CompoundVertexData(vertex, _rootCompoundVertex, false, position, vertexSize, border, layoutType);
@@ -242,14 +237,14 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             var verticesLeft = new HashSet<TVertex>(VisitedGraph.Vertices);
 
             //initial 0th level
-            _levels.Add(new HashSet<TVertex>(VisitedGraph.Vertices.Where(v => _compoundGraph.GetParent(v) == default(TVertex))));
-            RemoveAll(verticesLeft, _levels[0]);
+            Levels.Add(new HashSet<TVertex>(VisitedGraph.Vertices.Where(v => _compoundGraph.GetParent(v) == default(TVertex))));
+            RemoveAll(verticesLeft, Levels[0]);
 
             //other layers
-            for (int i = 1; verticesLeft.Count > 0; i++)
+            for (var i = 1; verticesLeft.Count > 0; i++)
             {
                 var nextLevel = new HashSet<TVertex>();
-                foreach (var parent in _levels[i - 1])
+                foreach (var parent in Levels[i - 1])
                 {
                     if (_compoundGraph.GetChildrenCount(parent) <= 0)
                         continue;
@@ -257,7 +252,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
                     foreach (var children in _compoundGraph.GetChildrenVertices(parent))
                         nextLevel.Add(children);
                 }
-                _levels.Add(nextLevel);
+                Levels.Add(nextLevel);
                 RemoveAll(verticesLeft, nextLevel);
             }
         }
@@ -265,9 +260,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         private void SetLevelIndices()
         {
             //set the level indexes in the vertex datas
-            for (int i = 0; i < _levels.Count; i++)
+            for (var i = 0; i < Levels.Count; i++)
             {
-                foreach (var v in _levels[i])
+                foreach (var v in Levels[i])
                     _vertexDatas[v].Level = i;
             }
         }

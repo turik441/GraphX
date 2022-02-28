@@ -8,8 +8,8 @@
 		/// </summary>
 		public double Width
 		{
-			get { return _width; }
-			set
+			get => _width;
+            set
 			{
 				_width = value;
 				NotifyPropertyChanged("Width");
@@ -22,8 +22,8 @@
 		/// </summary>
 		public double Height
 		{
-			get { return _height; }
-			set
+			get => _height;
+            set
 			{
 				_height = value;
 				NotifyPropertyChanged("Height");
@@ -36,8 +36,8 @@
 		/// </summary>
 		public int MaxEpoch
 		{
-			get { return _maxEpoch; }
-			set
+			get => _maxEpoch;
+            set
 			{
 				_maxEpoch = value;
 				NotifyPropertyChanged("MaxEpoch");
@@ -50,8 +50,8 @@
 		/// </summary>
 		public int RadiusConstantTime
 		{
-			get { return _radiusConstantTime; }
-			set
+			get => _radiusConstantTime;
+            set
 			{
 				_radiusConstantTime = value;
 				NotifyPropertyChanged("RadiusConstantTime");
@@ -64,8 +64,8 @@
 		/// </summary>
 		public int InitialRadius
 		{
-			get { return _initialRadius; }
-			set
+			get => _initialRadius;
+            set
 			{
 				_initialRadius = value;
 				NotifyPropertyChanged("InitialRadius");
@@ -78,8 +78,8 @@
 		/// </summary>
 		public int MinRadius
 		{
-			get { return _minRadius; }
-			set
+			get => _minRadius;
+            set
 			{
 				_minRadius = value;
 				NotifyPropertyChanged("MinRadius");
@@ -92,8 +92,8 @@
 		/// </summary>
 		public double InitialAdaption
 		{
-			get { return _initialAdaption; }
-			set
+			get => _initialAdaption;
+            set
 			{
 				_initialAdaption = value;
 				NotifyPropertyChanged("InitialAdaption");
@@ -106,8 +106,8 @@
 		/// </summary>
 		public double MinAdaption
 		{
-			get { return _minAdaption; }
-			set
+			get => _minAdaption;
+            set
 			{
 				_minAdaption = value;
 				NotifyPropertyChanged("MinAdaption");
@@ -120,8 +120,8 @@
 		/// </summary>
 		public double CoolingFactor
 		{
-			get { return _coolingFactor; }
-			set
+			get => _coolingFactor;
+            set
 			{
 				_coolingFactor = value;
 				NotifyPropertyChanged("CoolingFactor");

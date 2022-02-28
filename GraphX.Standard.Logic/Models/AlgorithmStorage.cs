@@ -16,13 +16,13 @@ namespace GraphX.Logic.Models
 
         public void RemoveSingleEdge(TEdge edge)
         {
-            if (EdgeRouting != null && EdgeRouting.EdgeRoutes != null && EdgeRouting.EdgeRoutes.ContainsKey(edge))
+            if (EdgeRouting?.EdgeRoutes != null && EdgeRouting.EdgeRoutes.ContainsKey(edge))
                 EdgeRouting.EdgeRoutes.Remove(edge);
         }
 
         public void AddSingleEdge(TEdge edge, Point[] routingPoints = null)
         {
-            if (EdgeRouting != null && EdgeRouting.EdgeRoutes != null && !EdgeRouting.EdgeRoutes.ContainsKey(edge))
+            if (EdgeRouting?.EdgeRoutes != null && !EdgeRouting.EdgeRoutes.ContainsKey(edge))
                 EdgeRouting.EdgeRoutes.Add(edge,routingPoints);
         }
 
@@ -35,7 +35,7 @@ namespace GraphX.Logic.Models
                 if (Layout.VertexSizes != null && Layout.VertexSizes.ContainsKey(vertex))
                     Layout.VertexSizes.Remove(vertex);
             }
-            if (OverlapRemoval != null && OverlapRemoval.Rectangles != null && OverlapRemoval.Rectangles.ContainsKey(vertex))
+            if (OverlapRemoval?.Rectangles != null && OverlapRemoval.Rectangles.ContainsKey(vertex))
                 OverlapRemoval.Rectangles.Remove(vertex);
             if (EdgeRouting != null)
             {
@@ -55,7 +55,7 @@ namespace GraphX.Logic.Models
                 if (Layout.VertexSizes != null && !Layout.VertexSizes.ContainsKey(vertex))
                     Layout.VertexSizes.Add(vertex, size.Size);
             }
-            if (OverlapRemoval != null && OverlapRemoval.Rectangles != null && !OverlapRemoval.Rectangles.ContainsKey(vertex))
+            if (OverlapRemoval?.Rectangles != null && !OverlapRemoval.Rectangles.ContainsKey(vertex))
                 OverlapRemoval.Rectangles.Add(vertex, size);
             if (EdgeRouting != null)
             {

@@ -11,37 +11,28 @@ namespace GraphX.Logic.Algorithms
 		where TEdge : IEdge<TVertex>
 	{
 		#region Private values
-		private readonly IDictionary<TVertex, int> _layerIndices = new Dictionary<TVertex, int>(); //the index of the layer where the vertex belongs to
-		private readonly List<IList<TVertex>> _layers = new List<IList<TVertex>>(); //the list of the vertices in the layers
-		private int _layer; //gives the index of the actual layer
-		private readonly IMutableBidirectionalGraph<TVertex, TEdge> _tmpGraph;
+
+        private readonly List<IList<TVertex>> _layers = new List<IList<TVertex>>(); //the list of the vertices in the layers
+        private readonly IMutableBidirectionalGraph<TVertex, TEdge> _tmpGraph;
 		#endregion
 
 		#region Properties
 		/// <summary>
 		/// This dictionary contains the layer-index for every vertices.
 		/// </summary>
-		public IDictionary<TVertex, int> LayerIndices
-		{
-			get { return _layerIndices; }
-		}
+		public IDictionary<TVertex, int> LayerIndices { get; } = new Dictionary<TVertex, int>();
 
-		/// <summary>
+        /// <summary>
 		/// The count of the layers in the graph.
 		/// </summary>
-		public int LayerCount
-		{
-			get { return _layer; }
-		}
+		public int LayerCount { get; private set; }
 
-		/// <summary>
+        /// <summary>
 		/// The vertices grouped by their LayerIndex.
 		/// </summary>
-		public IList<IList<TVertex>> Layers
-		{
-			get { return _layers; }
-		}
-		#endregion
+		public IList<IList<TVertex>> Layers => _layers;
+
+        #endregion
 
 		public delegate void LayerFinishedDelegate( object sender, LayeredTopologicalSortEventArgs e );
 		public event LayerFinishedDelegate LayerFinished;
@@ -65,11 +56,11 @@ namespace GraphX.Logic.Algorithms
 			//initializing the candidates (candidate for 'source' of the next layer)
 			var newSources = new HashSet<TVertex>();
 
-			for ( _layer = 0; sources.Count != 0; _layer++ )
+			for ( LayerCount = 0; sources.Count != 0; LayerCount++ )
 			{
 				foreach ( var s in sources )
 				{
-					_layerIndices[s] = _layer;
+					LayerIndices[s] = LayerCount;
 
 					//get the neighbours of this source
 					var outNeighbours = _tmpGraph.GetOutNeighbours( s );
@@ -87,7 +78,7 @@ namespace GraphX.Logic.Algorithms
 				_layers.Add( sources );
 				OnLayerFinished( new LayeredTopologicalSortEventArgs
 				                 	{
-				                 		LayerIndex = _layer,
+				                 		LayerIndex = LayerCount,
 				                 		Vertices = sources
 				                 	} );
 

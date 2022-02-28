@@ -11,41 +11,16 @@ namespace GraphX.Measure
     /// </summary>
     public struct Point
     {
-        private static readonly Point ZeroPoint = new Point();
-        public static Point Zero
-        {
-            get { return ZeroPoint; }
-        }
+        public static Point Zero { get; } = new Point();
 
-        internal double _x;
-        internal double _y;
-        public double X
-        {
-            get
-            {
-                return _x;
-            }
-            set
-            {
-                _x = value;
-            }
-        }
-        public double Y
-        {
-            get
-            {
-                return _y;
-            }
-            set
-            {
-                _y = value;
-            }
-        }
+        public double X { get; set; }
+
+        public double Y { get; set; }
 
         public Point(double x, double y)
         {
-            _x = x;
-            _y = y;
+            X = x;
+            Y = y;
         }
 
         #region Custom operator overloads
@@ -113,13 +88,12 @@ namespace GraphX.Measure
         /// <param name='o'>The object to compare to "this"</param>
         public override bool Equals(object o)
         {
-            if ((null == o) || !(o is Point))
+            if (!(o is Point value))
             {
                 return false;
             }
 
-            var value = (Point)o;
-            return Point.Equals(this, value);
+            return Equals(this, value);
         }
 
         /// <summary>
@@ -135,7 +109,7 @@ namespace GraphX.Measure
         /// <param name='value'>The Point to compare to "this"</param>
         public bool Equals(Point value)
         {
-            return Point.Equals(this, value);
+            return Equals(this, value);
         }
         /// <summary>
         /// Returns the HashCode for this Point
@@ -163,36 +137,36 @@ namespace GraphX.Measure
 
         public static explicit operator Size(Point point)
         {
-            return new Size(Math.Abs(point._x), Math.Abs(point._y));
+            return new Size(Math.Abs(point.X), Math.Abs(point.Y));
         }
 
         public static explicit operator Vector(Point point)
         {
-            return new Vector(point._x, point._y);
+            return new Vector(point.X, point.Y);
         }
 
         ///// OTHER CLASSES ARITHM + CONVERSIONS
 
         public static Point operator +(Point point, Vector vector)
         {
-            return new Point(point._x + vector._x, point._y + vector._y);
+            return new Point(point.X + vector.X, point.Y + vector.Y);
         }
 
         public static Point operator -(Point point, Vector vector)
         {
-            return new Point(point._x - vector._x, point._y - vector._y);
+            return new Point(point.X - vector.X, point.Y - vector.Y);
         }
 
         /// ARITHMETIC
 
         public static Vector operator -(Point value1, Point value2)
         {
-            return new Vector(value1._x - value2._x, value1._y - value2._y);
+            return new Vector(value1.X - value2.X, value1.Y - value2.Y);
         }
 
         public static Point operator +(Point value1, Point value2)
         {
-            return new Point(value1._x + value2._x, value1._y + value2._y);
+            return new Point(value1.X + value2.X, value1.Y + value2.Y);
         }
 
         public static Point operator *(double value1, Point value2)
@@ -212,15 +186,15 @@ namespace GraphX.Measure
 
         public void Offset(double offsetX, double offsetY)
         {
-            this._x += offsetX;
-            this._y += offsetY;
+            X += offsetX;
+            Y += offsetY;
         }
 
         #endregion
 
         public override string ToString()
         {
-            return string.Format("{0}:{1}", _x, _y);
+            return $"{X}:{Y}";
         }
     }
 }

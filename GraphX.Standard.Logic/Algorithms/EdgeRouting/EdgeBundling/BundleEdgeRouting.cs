@@ -36,8 +36,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         {
             Parameters = parameters;
             AreaRectangle = graphArea;
-            var prm = parameters as BundleEdgeRoutingParameters;
-            if (prm != null)
+            if (parameters is BundleEdgeRoutingParameters prm)
             {
                 SubdivisionPoints = prm.SubdivisionPoints;
                 Straightening = prm.Straightening;
@@ -84,12 +83,12 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             //sw.Stop();
 
 
-            DivideAllEdges(_subdivisionPoints, cancellationToken);
+            DivideAllEdges(SubdivisionPoints, cancellationToken);
 
             //sw = new Stopwatch();
             //sw.Start();
 
-            for (var i = 0; i < _iterations; i++)
+            for (var i = 0; i < Iterations; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 MoveControlPoints(_edgeGroupData);
@@ -108,8 +107,8 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 
             _cooldown = 1f;
 
-            if (_straightening > 0)
-                StraightenEdgesInternally(_edgeGroupData, _straightening);
+            if (Straightening > 0)
+                StraightenEdgesInternally(_edgeGroupData, Straightening);
 
             foreach (var e in graph.Edges)
             {
@@ -152,7 +151,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             FindCompatibleEdges(_movedEdgeGroupData, CancellationToken.None);
             ResetMovedEdges();
 
-            for (var i = 0; i < _iterations; i++)
+            for (var i = 0; i < Iterations; i++)
                 MoveControlPoints(_movedEdgeGroupData);
 
             for (var i = 0; i < 5; i++)
@@ -163,32 +162,29 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 
             _cooldown = 1f;
 
-            if (_straightening > 0)
-                StraightenEdgesInternally(_movedEdgeGroupData, _straightening);
+            if (Straightening > 0)
+                StraightenEdgesInternally(_movedEdgeGroupData, Straightening);
 
             foreach (var e in edges)
             {
-                EdgeGroupData ed;
                 var key = new KeyPair(e.Source.ID, e.Target.ID);
-                _movedEdgeGroupData.TryGetValue(key, out ed);
-                if (ed != null)
+                _movedEdgeGroupData.TryGetValue(key, out var ed);
+                if (ed == null) continue;
+                var list2 = ed.ControlPoints.ToList();
+
+                //Point p1 = GeometryHelper.GetEdgeEndpointOnRectangle(VertexPositions[e.Source], VertexSizes[e.Source], list2.First());
+                //Point p2 = GeometryHelper.GetEdgeEndpointOnRectangle(VertexPositions[e.Target], VertexSizes[e.Target], list2.Last());
+                //list2.Insert(0, p1); list2.Add(p2);
+                if (list2.Count > 0)
                 {
-                    var list2 = ed.ControlPoints.ToList();
-
-                    //Point p1 = GeometryHelper.GetEdgeEndpointOnRectangle(VertexPositions[e.Source], VertexSizes[e.Source], list2.First());
-                    //Point p2 = GeometryHelper.GetEdgeEndpointOnRectangle(VertexPositions[e.Target], VertexSizes[e.Target], list2.Last());
-                    //list2.Insert(0, p1); list2.Add(p2);
-                    if (list2.Count > 0)
-                    {
-                        list2.Insert(0, list2.First());
-                        list2.Add(list2.Last());
-                    }
-
-                    if (EdgeRoutes.ContainsKey(e))
-                        EdgeRoutes[e] = list2.ToArray();
-                    else EdgeRoutes.Add(e, list2.ToArray());
+                    list2.Insert(0, list2.First());
+                    list2.Add(list2.Last());
                 }
-                    //e.SetValue(ReservedMetadataKeys.PerEdgeIntermediateCurvePoints, ed.controlPoints);
+
+                if (EdgeRoutes.ContainsKey(e))
+                    EdgeRoutes[e] = list2.ToArray();
+                else EdgeRoutes.Add(e, list2.ToArray());
+                //e.SetValue(ReservedMetadataKeys.PerEdgeIntermediateCurvePoints, ed.controlPoints);
             }
         }
 
@@ -234,10 +230,9 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// </param>
         private void AddEdgeData(TEdge e)
         {
-            EdgeGroupData ed;
             var key = new KeyPair(e.Source.ID, e.Target.ID);
 
-            _edgeGroupData.TryGetValue(key, out ed);
+            _edgeGroupData.TryGetValue(key, out var ed);
 
             if (ed == null)
             {
@@ -266,7 +261,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// </param>
         private void AddAllExistingData(IEnumerable<TEdge> edges)
         {
-            _subdivisionPoints = 0;
+            SubdivisionPoints = 0;
             foreach (var e in edges)
                 if (!e.IsSelfLoop)
                     AddExistingData(e);
@@ -282,10 +277,9 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// </param>
         private void AddExistingData(TEdge e)
         {
-            EdgeGroupData ed;
             var key = new KeyPair(e.Source.ID, e.Target.ID);
 
-            _edgeGroupData.TryGetValue(key, out ed);
+            _edgeGroupData.TryGetValue(key, out var ed);
 
             if (ed == null)
             {
@@ -298,9 +292,9 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 
                 ed.ControlPoints = e.RoutingPoints; //e.GetValue(ReservedMetadataKeys.PerEdgeIntermediateCurvePoints);
 
-                if (_subdivisionPoints == 0) _subdivisionPoints = ed.ControlPoints.Length;
-                ed.NewControlPoints = new Point[_subdivisionPoints];
-                ed.K = _springConstant * (_subdivisionPoints + 1) / ed.Length;
+                if (SubdivisionPoints == 0) SubdivisionPoints = ed.ControlPoints.Length;
+                ed.NewControlPoints = new Point[SubdivisionPoints];
+                ed.K = SpringConstant * (SubdivisionPoints + 1) / ed.Length;
                 if (ed.K > 0.5f) ed.K = 0.5f;
                 //ed.edges = new HashSet<int>();
                 ed.EdgeCount = 0;
@@ -403,13 +397,13 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         private float CalculateCompatibility(EdgeGroupData ed1, EdgeGroupData ed2)
         {
             var c = PositionCompatibility(ed1, ed2);
-            if (c > _threshold) c *= ScaleCompatibility(ed1, ed2);
+            if (c > Threshold) c *= ScaleCompatibility(ed1, ed2);
             else return 0;
-            if (c > _threshold) c *= AngleCompatibility(ed1, ed2);
+            if (c > Threshold) c *= AngleCompatibility(ed1, ed2);
             else return 0;
-            if (c > _threshold) c *= VisibilityCompatibility(ed1, ed2);
+            if (c > Threshold) c *= VisibilityCompatibility(ed1, ed2);
             else return 0;
-            if (c > _threshold)
+            if (c > Threshold)
                 return c;
             else return 0;
         }
@@ -432,12 +426,10 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// </returns>
         private float VisibilityCompatibility(EdgeGroupData ed1, EdgeGroupData ed2)
         {
-            float c1, c2;
-
-            c1 = VisibilityCoefficient(ed1, ed2);
+            var c1 = VisibilityCoefficient(ed1, ed2);
             if (c1 == 0)
                 return 0;
-            c2 = VisibilityCoefficient(ed2, ed1);
+            var c2 = VisibilityCoefficient(ed2, ed1);
 
             return Math.Min(c1, c2);
         }
@@ -465,9 +457,11 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             var q1 = ed2.V1;
             var q2 = ed2.V2;
 
-            var pn = new Point();
-            pn.X = p1.Y - p2.Y;
-            pn.Y = p2.X - p1.X;
+            var pn = new Point
+            {
+                X = p1.Y - p2.Y,
+                Y = p2.X - p1.X
+            };
 
             var pn1 = VectorTools.Plus(pn, p1);
             var pn2 = VectorTools.Plus(pn, p2);
@@ -613,7 +607,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             foreach (var ed in _edgeGroupData.Values)
                 DivideEdge(ed, subdivisionPointsNum);
 
-            _subdivisionPoints = subdivisionPointsNum;
+            SubdivisionPoints = subdivisionPointsNum;
         }
 
 
@@ -623,7 +617,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         private void ResetMovedEdges()
         {
             foreach (var ed in _movedEdgeGroupData.Values)
-                DivideEdge(ed, _subdivisionPoints);
+                DivideEdge(ed, SubdivisionPoints);
         }
 
         /// <summary>
@@ -647,7 +641,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             for (var i = 0; i < subdivisionPointsNum; i++)
                 sPoints[i] = VectorTools.Plus(ed.V1, VectorTools.Multiply(move, r * (i + 1)));
             ed.ControlPoints = sPoints;
-            ed.K = _springConstant * (subdivisionPointsNum + 1) / ed.Length;
+            ed.K = SpringConstant * (subdivisionPointsNum + 1) / ed.Length;
             if (ed.K > 0.5f) ed.K = 0.5f;
         }
 
@@ -710,15 +704,15 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// <param name="o">
         /// Edge data that contains subdivision points to be moved
         /// </param>
-        private void CalculateNewControlPoints(Object o)
+        private void CalculateNewControlPoints(object o)
         {
             var ed = (EdgeGroupData)o;
-            for (var i = 0; i < _subdivisionPoints; i++)
+            for (var i = 0; i < SubdivisionPoints; i++)
             {
                 var p = ed.ControlPoints[i];
                 Point p1, p2;
                 p1 = i == 0 ? ed.V1 : ed.ControlPoints[i - 1];
-                p2 = i == (_subdivisionPoints - 1) ? ed.V2 : ed.ControlPoints[i + 1];
+                p2 = i == (SubdivisionPoints - 1) ? ed.V2 : ed.ControlPoints[i + 1];
                 //SizeF sp = new SizeF(p);
                 var f = VectorTools.Multiply(VectorTools.Plus(VectorTools.Minus(p1, p), VectorTools.Minus(p2, p)), ed.K);
                 var r = new Point(0, 0);
@@ -739,8 +733,8 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                         q = ed2.ControlPoints[i];
                     else
                     {
-                        q = ed2.ControlPoints[_subdivisionPoints - i - 1];
-                        if (_directed && _repulseOpposite) j = _repulsionCoefficient;
+                        q = ed2.ControlPoints[SubdivisionPoints - i - 1];
+                        if (_directed && RepulseOpposite) j = RepulsionCoefficient;
                     }
                     var fs = VectorTools.Minus(q, p);
                     //PointF fs = new PointF(q.X - p.X, q.Y - p.Y);
@@ -783,7 +777,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                     if (ed.NewControlPoints[i].Y > AreaRectangle.Bottom)
                         ed.NewControlPoints[i].Y = AreaRectangle.Bottom;
             }
-            if (_useThreading) _sem.Release();
+            if (UseThreading) _sem.Release();
         }
 
         /// <summary>
@@ -795,7 +789,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// </param>
         private void MoveControlPoints(Dictionary<KeyPair, EdgeGroupData> groupsToMove)
         {
-            if (_useThreading)
+            if (UseThreading)
             {
                 foreach (var ed in groupsToMove.Values)
                     ThreadPool.QueueUserWorkItem(CalculateNewControlPoints, ed);
@@ -812,7 +806,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             foreach (var ed in groupsToMove.Values)
             {
                 ed.ControlPoints = ed.NewControlPoints;
-                ed.NewControlPoints = new Point[_subdivisionPoints];
+                ed.NewControlPoints = new Point[SubdivisionPoints];
             }
 
             //if (cooldown > 0.05) cooldown *= 0.95f; else cooldown = 0;
@@ -834,14 +828,14 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         {
             foreach (var ed in groupsToStraighten.Values)
             {
-                for (var i = 0; i < _subdivisionPoints; i++)
+                for (var i = 0; i < SubdivisionPoints; i++)
                 {
                     //STRONG CHANGE
                     var p = ed.ControlPoints[i];
                     p = VectorTools.Plus(VectorTools.Multiply(p, 1 - s),
                         VectorTools.Multiply(VectorTools.Plus(ed.V1,
                             VectorTools.Multiply(VectorTools.Minus(ed.V2, ed.V1), 
-                                1.0f * (i + 1) / (_subdivisionPoints + 1))), s));
+                                1.0f * (i + 1) / (SubdivisionPoints + 1))), s));
                     ed.ControlPoints[i].X = p.X;
                     ed.ControlPoints[i].Y = p.Y;
                 }
@@ -887,26 +881,9 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         private readonly Dictionary<KeyPair, EdgeGroupData> _movedEdgeGroupData = new Dictionary<KeyPair, EdgeGroupData>();
 
 
-
-        private int _subdivisionPoints = 15;
-
-        private int _iterations = 50;
-
-        private bool _repulseOpposite;
-
         private bool _directed = true;
 
-        private bool _useThreading = true;
-
-        private float _springConstant = 10f;
-
-        private float _threshold = 0.2f;
-
         private float _cooldown = 1f;
-
-        private float _repulsionCoefficient = -0.1f;
-
-        private float _straightening = 0.15f;
 
         private readonly Common.Models.Semaphore.Semaphore _sem = new Common.Models.Semaphore.Semaphore(0, Int32.MaxValue);
 
@@ -915,52 +892,32 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// Gets or sets the number of subdivision points each edge should have.
         /// Default value is 15.
         /// </summary>
-        public int SubdivisionPoints
-        {
-            get { return _subdivisionPoints; }
-            set { _subdivisionPoints = value; }
-        }
+        public int SubdivisionPoints { get; set; } = 15;
 
         /// <summary>
         /// Gets or sets the number of iterations for moving the control points.
         /// Default value is 50.
         /// </summary>
-        public int Iterations
-        {
-            get { return _iterations; }
-            set { _iterations = value; }
-        }
+        public int Iterations { get; set; } = 50;
 
         /// <summary>
         /// Gets or sets the value indicating whether opposite edges should attracts or repulse each other.
         /// Default value is false.
         /// </summary>
-        public bool RepulseOpposite
-        {
-            get { return _repulseOpposite; }
-            set { _repulseOpposite = value; }
-        }
+        public bool RepulseOpposite { get; set; }
 
         /// <summary>
         /// Gets or sets the the value that determines if multiple threads should be used for the calculations.
         /// Default value is true.
         /// </summary>
-        public bool UseThreading
-        {
-            get { return _useThreading; }
-            set { _useThreading = value; }
-        }
+        public bool UseThreading { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the value for the spring constant.
         /// Edges are more easely bent if the value is lower.
         /// Default value is 10.
         /// </summary>
-        public float SpringConstant
-        {
-            get { return _springConstant; }
-            set { _springConstant = value; }
-        }
+        public float SpringConstant { get; set; } = 10f;
 
         /// <summary>
         /// Gets or sets the treshold for the edge compatibility.
@@ -969,33 +926,21 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         /// Edges that have coefficient lower than the treshold between them are not considered for interaction.
         /// Default value is 0.2.
         /// </summary>
-        public float Threshold
-        {
-            get { return _threshold; }
-            set { _threshold = value; }
-        }
+        public float Threshold { get; set; } = 0.2f;
 
         /// <summary>
         /// If repulseOpposite is true, this determines how much will opposite edges repulse eachother.
         /// From -1 to 0.
         /// Default is -0.1
         /// </summary>
-        public float RepulsionCoefficient
-        {
-            get { return _repulsionCoefficient; }
-            set { _repulsionCoefficient = value; }
-        }
+        public float RepulsionCoefficient { get; set; } = -0.1f;
 
         /// <summary>
         /// Gets or sets the amount of straightening that will be applied after every bundling.
         /// This can produce better-looking graphs.
         /// Default value is 0.15, range is from 0 to 1.
         /// </summary>
-        public float Straightening
-        {
-            get { return _straightening; }
-            set { _straightening = value; }
-        }
+        public float Straightening { get; set; } = 0.15f;
 
         struct KeyPair
         {

@@ -24,10 +24,7 @@ namespace GraphX.Controls
         public static readonly DependencyProperty HighlightEdgesProperty = DependencyProperty.RegisterAttached("HighlightEdges", typeof(EdgesType), typeof(HighlightBehaviour), new PropertyMetadata(EdgesType.Out));
         public static readonly DependencyProperty HighlightedEdgeTypeProperty = DependencyProperty.RegisterAttached("HighlightedEdgeType", typeof(HighlightedEdgeType), typeof(HighlightBehaviour), new PropertyMetadata(HighlightedEdgeType.None));
 
-        public static HighlightedEdgeType GetHighlightedEdgeType(DependencyObject obj)
-        {
-            return (HighlightedEdgeType)obj.GetValue(HighlightedEdgeTypeProperty);
-        }
+        public static HighlightedEdgeType GetHighlightedEdgeType(DependencyObject obj) => (HighlightedEdgeType)obj.GetValue(HighlightedEdgeTypeProperty);
 
         public static void SetHighlightedEdgeType(DependencyObject obj, HighlightedEdgeType value)
         {
@@ -80,12 +77,11 @@ namespace GraphX.Controls
         private static void OnIsHighlightEnabledPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
 #if WPF
-            var element = obj as IInputElement;
+            if(!(obj is IInputElement element))
 #elif METRO
-            var element = obj as FrameworkElement;
+            if(!(obj is FrameworkElement element))
 #endif
-            if (element == null)
-                    return;
+                return;
 
             if (e.NewValue is bool == false)
                 return;

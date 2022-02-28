@@ -151,7 +151,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		{
             var rnd = new Random(Parameters.Seed);
             //initialize with random position
-            foreach ( TVertex v in VisitedGraph.Vertices )
+            foreach ( var v in VisitedGraph.Vertices )
 			{
 				//for vertices without assigned position
 				if ( !VertexPositions.ContainsKey( v ) )

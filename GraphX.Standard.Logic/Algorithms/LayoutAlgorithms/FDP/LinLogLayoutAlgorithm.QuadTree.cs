@@ -12,37 +12,25 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		class QuadTree
 		{
 			#region Properties
-			private readonly QuadTree[] _children = new QuadTree[4];
-			public QuadTree[] Children
-			{
-				get { return _children; }
-			}
 
-		    public int Index { get; private set; }
+            public QuadTree[] Children { get; } = new QuadTree[4];
+
+            public int Index { get; private set; }
 
 		    private Point _position;
 
-			public Point Position
-			{
-				get { return _position; }
-			}
+			public Point Position => _position;
 
-		    public double Weight { get; private set; }
+            public double Weight { get; private set; }
 
 		    private Point _minPos;
 			private Point _maxPos;
 
 			#endregion
 
-			public double Width
-			{
-				get
-				{
-					return Math.Max( _maxPos.X - _minPos.X, _maxPos.Y - _minPos.Y );
-				}
-			}
+			public double Width => Math.Max( _maxPos.X - _minPos.X, _maxPos.Y - _minPos.Y );
 
-		    private const int MAX_DEPTH = 20;
+            private const int MAX_DEPTH = 20;
 
 			public QuadTree( int index, Point position, double weight, Point minPos, Point maxPos )
 			{
@@ -87,7 +75,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 				//Debug.WriteLine( string.Format( "childIndex: {0}", childIndex ) );               
 
 
-				if ( _children[childIndex] == null )
+				if ( Children[childIndex] == null )
 				{
 					var newMin = new Point();
 					var newMax = new Point();
@@ -111,11 +99,11 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 						newMin.Y = middleY;
 						newMax.Y = _maxPos.Y;
 					}
-					_children[childIndex] = new QuadTree( nodeIndex, nodePos, nodeWeight, newMin, newMax );
+					Children[childIndex] = new QuadTree( nodeIndex, nodePos, nodeWeight, newMin, newMax );
 				}
 				else
 				{
-					_children[childIndex].AddNode( nodeIndex, nodePos, nodeWeight, depth + 1 );
+					Children[childIndex].AddNode( nodeIndex, nodePos, nodeWeight, depth + 1 );
 				}
 			}
 
@@ -138,8 +126,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 				if ( oldPos.Y > middleY )
 					childIndex += 1 << 1;
 
-				if ( _children[childIndex] != null )
-					_children[childIndex].MoveNode( oldPos, newPos, nodeWeight );
+				if ( Children[childIndex] != null )
+					Children[childIndex].MoveNode( oldPos, newPos, nodeWeight );
 			}
 		}
 	}

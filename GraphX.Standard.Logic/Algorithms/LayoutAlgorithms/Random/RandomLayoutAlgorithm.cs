@@ -52,15 +52,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
            
         }
 
-        public override bool NeedVertexSizes
-        {
-            get { return true; }
-        }
+        public override bool NeedVertexSizes => true;
 
-        public override bool SupportsObjectFreeze
-        {
-            get { return true; }
-        }
+        public override bool SupportsObjectFreeze => true;
 
         public override void ResetGraph(IEnumerable<TVertex> vertices, IEnumerable<TEdge> edges)
         {

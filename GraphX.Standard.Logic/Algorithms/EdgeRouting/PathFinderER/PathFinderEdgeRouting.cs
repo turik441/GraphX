@@ -140,8 +140,8 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             var lastPt = new Point(0, 0);
 
             //get the intersection matrix
-            for (int i = 0; i < hCount; i++)
-                for (int j = 0; j < vCount; j++)
+            for (var i = 0; i < hCount; i++)
+                for (var j = 0; j < vCount; j++)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -151,10 +151,10 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                 }
             ////////////debug
 #if DEBUG
-            for (int i = 0; i < vCount; i++)
+            for (var i = 0; i < vCount; i++)
             {
                 var str = "";
-                for (int j = 0; j < hCount; j++)
+                for (var j = 0; j < hCount; j++)
                 {
                     str += _resMatrix[j, i].IsIntersected ? "0 " : "1 ";
                 }
@@ -202,7 +202,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 
         private double GetFakeDistance(Point source, Point target)
         {
-            double dx = target.X - source.X; double dy = target.Y - source.Y;
+            var dx = target.X - source.X; var dy = target.Y - source.Y;
             return dx * dx + dy * dy;
         }
     }

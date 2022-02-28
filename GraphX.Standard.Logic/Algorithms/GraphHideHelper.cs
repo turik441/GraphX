@@ -50,8 +50,7 @@ namespace GraphX.Logic.Algorithms
 
 		protected HiddenCollection GetHiddenCollection( string tag )
 		{
-			HiddenCollection h;
-			if ( !_hiddenCollections.TryGetValue( tag, out h ) )
+            if ( !_hiddenCollections.TryGetValue( tag, out var h ) )
 			{
 				h = new HiddenCollection();
 				_hiddenCollections[tag] = h;
@@ -60,43 +59,33 @@ namespace GraphX.Logic.Algorithms
 		}
 
 		protected void OnEdgeHidden( TEdge e )
-		{
-			if ( EdgeHidden != null )
-				EdgeHidden( e );
-		}
+        {
+            EdgeHidden?.Invoke( e );
+        }
 
 		protected void OnEdgeUnhidden( TEdge e )
-		{
-			if ( EdgeUnhidden != null )
-				EdgeUnhidden( e );
-		}
+        {
+            EdgeUnhidden?.Invoke( e );
+        }
 
 		protected void OnVertexHidden( TVertex v )
-		{
-			if ( VertexHidden != null )
-				VertexHidden( v );
-		}
+        {
+            VertexHidden?.Invoke( v );
+        }
 
 		protected void OnVertexUnhidden( TVertex v )
-		{
-			if ( VertexUnhidden != null )
-				VertexUnhidden( v );
-		}
+        {
+            VertexUnhidden?.Invoke( v );
+        }
 		#endregion
 
 		#region ISoftMutableGraph<TVertex,TEdge> Members
 
-		public IEnumerable<TVertex> HiddenVertices
-		{
-			get { return _hiddenVertices; }
-		}
+		public IEnumerable<TVertex> HiddenVertices => _hiddenVertices;
 
-		public IEnumerable<TEdge> HiddenEdges
-		{
-			get { return _hiddenEdges; }
-		}
+        public IEnumerable<TEdge> HiddenEdges => _hiddenEdges;
 
-		/// <summary>
+        /// <summary>
 		/// Hides the vertex <code>v</code>.
 		/// </summary>
 		/// <param name="v">The vertex to hide.</param>
@@ -123,7 +112,7 @@ namespace GraphX.Logic.Algorithms
 		public void HideVertices( IEnumerable<TVertex> vertices )
 		{
 			var verticesToHide = new List<TVertex>( vertices );
-			foreach ( TVertex v in verticesToHide )
+			foreach ( var v in verticesToHide )
 			{
 				HideVertex( v );
 			}
@@ -131,12 +120,12 @@ namespace GraphX.Logic.Algorithms
 
 		public bool HideVertex( TVertex v, string tag )
 		{
-			HiddenCollection h = GetHiddenCollection( tag );
+			var h = GetHiddenCollection( tag );
 			var eeh = new EdgeAction<TVertex, TEdge>( e => h.hiddenEdges.Add( e ) );
 			var veh = new VertexAction<TVertex>( vertex => h.hiddenVertices.Add( vertex ) );
 			EdgeHidden += eeh;
 			VertexHidden += veh;
-			bool ret = HideVertex( v );
+			var ret = HideVertex( v );
 			EdgeHidden -= eeh;
 			VertexHidden -= veh;
 			return ret;
@@ -177,8 +166,7 @@ namespace GraphX.Logic.Algorithms
 		public void UnhideVertexAndEdges( TVertex v )
 		{
 			UnhideVertex( v );
-			List<TEdge> hiddenEdgesList;
-			_hiddenEdgesOf.TryGetValue( v, out hiddenEdgesList );
+            _hiddenEdgesOf.TryGetValue( v, out var hiddenEdgesList );
 			if ( hiddenEdgesList != null )
 				UnhideEdges( hiddenEdgesList );
 		}
@@ -202,8 +190,7 @@ namespace GraphX.Logic.Algorithms
 
 		private List<TEdge> GetHiddenEdgeListOf( TVertex v )
 		{
-			List<TEdge> hiddenEdgeList;
-			_hiddenEdgesOf.TryGetValue( v, out hiddenEdgeList );
+            _hiddenEdgesOf.TryGetValue( v, out var hiddenEdgeList );
 			if ( hiddenEdgeList == null )
 			{
 				hiddenEdgeList = new List<TEdge>();
@@ -227,7 +214,7 @@ namespace GraphX.Logic.Algorithms
 			var h = GetHiddenCollection( tag );
 			var eeh = new EdgeAction<TVertex, TEdge>( edge => h.hiddenEdges.Add( edge ) );
 			EdgeHidden += eeh;
-			bool ret = HideEdge( e );
+			var ret = HideEdge( e );
 			EdgeHidden -= eeh;
 			return ret;
 		}
@@ -294,12 +281,12 @@ namespace GraphX.Logic.Algorithms
 
 		public bool Unhide( string tag )
 		{
-			HiddenCollection h = GetHiddenCollection( tag );
-			foreach ( TVertex v in h.hiddenVertices )
+			var h = GetHiddenCollection( tag );
+			foreach ( var v in h.hiddenVertices )
 			{
 				UnhideVertex( v );
 			}
-			foreach ( TEdge e in h.hiddenEdges )
+			foreach ( var e in h.hiddenEdges )
 			{
 				UnhideEdge( e );
 			}
@@ -319,16 +306,11 @@ namespace GraphX.Logic.Algorithms
 			return true;
 		}
 
-		public int HiddenVertexCount
-		{
-			get { return _hiddenVertices.Count; }
-		}
+		public int HiddenVertexCount => _hiddenVertices.Count;
 
-		public int HiddenEdgeCount
-		{
-			get { return _hiddenEdges.Count; }
-		}
-		#endregion
+        public int HiddenEdgeCount => _hiddenEdges.Count;
+
+        #endregion
 
 		#region IBidirectionalGraph<TVertex,TEdge> Members
 
@@ -404,17 +386,11 @@ namespace GraphX.Logic.Algorithms
 
 		#region IGraph<TVertex,TEdge> Members
 
-		public bool AllowParallelEdges
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public bool AllowParallelEdges => throw new NotImplementedException();
 
-		public bool IsDirected
-		{
-			get { throw new NotImplementedException(); }
-		}
+        public bool IsDirected => throw new NotImplementedException();
 
-		#endregion
+        #endregion
 
 		#region IVertexSet<TVertex,TEdge> Members
 
@@ -423,22 +399,13 @@ namespace GraphX.Logic.Algorithms
 			throw new NotImplementedException();
 		}
 
-		public bool IsVerticesEmpty
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public bool IsVerticesEmpty => throw new NotImplementedException();
 
-		public int VertexCount
-		{
-			get { throw new NotImplementedException(); }
-		}
+        public int VertexCount => throw new NotImplementedException();
 
-		public IEnumerable<TVertex> Vertices
-		{
-			get { throw new NotImplementedException(); }
-		}
+        public IEnumerable<TVertex> Vertices => throw new NotImplementedException();
 
-		#endregion
+        #endregion
 
 		#region IEdgeListGraph<TVertex,TEdge> Members
 
@@ -447,22 +414,13 @@ namespace GraphX.Logic.Algorithms
 			throw new NotImplementedException();
 		}
 
-		public int EdgeCount
-		{
-			get { throw new NotImplementedException(); }
-		}
+		public int EdgeCount => throw new NotImplementedException();
 
-		public IEnumerable<TEdge> Edges
-		{
-			get { throw new NotImplementedException(); }
-		}
+        public IEnumerable<TEdge> Edges => throw new NotImplementedException();
 
-		public bool IsEdgesEmpty
-		{
-			get { throw new NotImplementedException(); }
-		}
+        public bool IsEdgesEmpty => throw new NotImplementedException();
 
-		#endregion
+        #endregion
 
 		public bool TryGetInEdges( TVertex v, out IEnumerable<TEdge> edges )
 		{

@@ -17,7 +17,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms.Grouped
         where TGraph : IVertexAndEdgeListGraph<TVertex, TEdge>
     {        
 
-        public override bool NeedVertexSizes { get { return true; } }
+        public override bool NeedVertexSizes => true;
 
         public override void ResetGraph(IEnumerable<TVertex> vertices, IEnumerable<TEdge> edges)
         {
@@ -115,7 +115,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms.Grouped
                 cancellationToken.ThrowIfCancellationRequested();
                 ora.Rectangles.ForEach(a =>
                 {
-                    int group = (int) a.Key;
+                    var group = (int) a.Key;
                     //_params.GroupParametersList.FirstOrDefault(b => b.GroupId == (int)a.Key).ZoneRectangle = origList[a.Key];
                     ArrangeRectangle(a.Value, group, origList[a.Key]);
                 });

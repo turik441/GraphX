@@ -8,8 +8,8 @@
 		/// </summary>
 		public double ComponentGap
 		{
-			get { return _componentGap; }
-			set
+			get => _componentGap;
+            set
 			{
 				if (_componentGap == value) return;
 				_componentGap = value;
@@ -23,8 +23,8 @@
 		/// </summary>
 		public double VertexGap
 		{
-			get { return _vertexGap; }
-			set
+			get => _vertexGap;
+            set
 			{
 			    if (_vertexGap == value) return;
 			    _vertexGap = value;
@@ -38,8 +38,8 @@
 		/// </summary>
 		public double LayerGap
 		{
-			get { return _layerGap; }
-			set
+			get => _layerGap;
+            set
 			{
 			    if (_layerGap == value) return;
 			    _layerGap = value;
@@ -53,8 +53,8 @@
 		/// </summary>
 		public LayoutDirection Direction
 		{
-			get { return _direction; }
-			set
+			get => _direction;
+            set
 			{
 			    if (_direction == value) return;
 			    _direction = value;
@@ -68,8 +68,8 @@
 		/// </summary>
 		public SpanningTreeGeneration SpanningTreeGeneration
 		{
-			get { return _spanningTreeGeneration; }
-			set
+			get => _spanningTreeGeneration;
+            set
 			{
 			    if (_spanningTreeGeneration == value) return;
 			    _spanningTreeGeneration = value;
@@ -81,7 +81,7 @@
 
         public bool OptimizeWidthAndHeight
         {
-            get { return _optimizeWidthAndHeight; }
+            get => _optimizeWidthAndHeight;
             set
             {
                 if (value == _optimizeWidthAndHeight)
@@ -96,7 +96,7 @@
 
         public double WidthPerHeight
         {
-            get { return _widthPerHeight; }
+            get => _widthPerHeight;
             set
             {
                 if (value == _widthPerHeight)

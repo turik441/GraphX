@@ -337,13 +337,12 @@ namespace GraphX.Controls
         private static void OnIsDragEnabledPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
 #if WPF
-            var element = obj as IInputElement;
 #elif METRO
             var element = obj as FrameworkElement;
 #else
             throw new NotImplementedException();
 #endif
-            if (element == null)
+            if (!(obj is IInputElement element))
                 return;
 
             if (e.NewValue is bool == false)
@@ -393,12 +392,11 @@ namespace GraphX.Controls
 #if WPF
         private static void OnEdgeDrageStarted(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            DependencyObject obj = sender as DependencyObject;
+            var obj = sender as DependencyObject;
 
             SetIsDragging(obj, true);
 
-            var element = obj as IInputElement;
-            if (element != null)
+            if (obj is IInputElement element)
             {
                 element.CaptureMouse();
                 element.MouseMove -= OnEdgeDragging;
@@ -415,7 +413,7 @@ namespace GraphX.Controls
             if (!GetIsDragging(obj))
                 return;
 
-            EdgeControl edgeControl = sender as EdgeControl;
+            var edgeControl = sender as EdgeControl;
 
             edgeControl.PrepareEdgePathFromMousePointer();
 
@@ -424,13 +422,11 @@ namespace GraphX.Controls
 
         private static void OnEdgeDragFinished(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            EdgeControl edgeControl = sender as EdgeControl;
+            if (!(sender is EdgeControl edgeControl)) return;
 
-            if (edgeControl == null) return;
+            var graphAreaBase = edgeControl.RootArea;
 
-            GraphAreaBase graphAreaBase = edgeControl.RootArea;
-
-            VertexControl vertexControl = graphAreaBase.GetVertexControlAt(e.GetPosition(graphAreaBase));
+            var vertexControl = graphAreaBase.GetVertexControlAt(e.GetPosition(graphAreaBase));
 
             if (vertexControl != null)
             {
@@ -438,7 +434,7 @@ namespace GraphX.Controls
 
                 if (vertexControl.VertexConnectionPointsList.Count > 0)
                 {
-                    IVertexConnectionPoint vertexConnectionPoint = vertexControl.GetConnectionPointAt(e.GetPosition(graphAreaBase));
+                    var vertexConnectionPoint = vertexControl.GetConnectionPointAt(e.GetPosition(graphAreaBase));
 
                     var edge = edgeControl.Edge as IGraphXCommonEdge;
 
@@ -461,8 +457,7 @@ namespace GraphX.Controls
                 //obj.ClearValue(OriginalXProperty);
                 //obj.ClearValue(OriginalYProperty);
 
-                var element = sender as IInputElement;
-                if (element != null)
+                if (sender is IInputElement element)
                 {
                     element.MouseMove -= OnVertexDragging;
                     element.ReleaseMouseCapture();
@@ -501,8 +496,7 @@ namespace GraphX.Controls
 
             //capture the mouse
 #if WPF
-            var element = obj as IInputElement;
-            if (element != null)
+            if (obj is IInputElement element)
             {
                 element.CaptureMouse();
                 element.MouseMove -= OnVertexDragging;
@@ -549,8 +543,7 @@ namespace GraphX.Controls
 
             //we finished the drag, release the mouse
 #if WPF
-            var element = sender as IInputElement;
-            if (element != null)
+            if (sender is IInputElement element)
             {
                 element.MouseMove -= OnVertexDragging;
                 element.ReleaseMouseCapture();
@@ -579,12 +572,12 @@ namespace GraphX.Controls
             var area = GetAreaFromObject(obj);
             var pos = GetPositionInArea(area, e);
 
-            double horizontalChange = pos.X - GetOriginalMouseX(obj);
-            double verticalChange = pos.Y - GetOriginalMouseY(obj);
+            var horizontalChange = pos.X - GetOriginalMouseX(obj);
+            var verticalChange = pos.Y - GetOriginalMouseY(obj);
 
             // Determine whether to use snapping
-            bool snap = GetIsSnappingPredicate(obj)(obj);
-            bool individualSnap = false;
+            var snap = GetIsSnappingPredicate(obj)(obj);
+            var individualSnap = false;
             // Snap modifier functions to apply to the primary dragged object
             SnapModifierFunc snapXMod = null;
             SnapModifierFunc snapYMod = null;
@@ -614,8 +607,7 @@ namespace GraphX.Controls
                 var primaryDragVertex = obj as VertexControl;
                 if (primaryDragVertex == null)
                 {
-                    var ec = obj as EdgeControl;
-                    if (ec != null)
+                    if (obj is EdgeControl ec)
                         primaryDragVertex = ec.Source ?? ec.Target;
 
                     if (primaryDragVertex == null)
@@ -645,20 +637,16 @@ namespace GraphX.Controls
 
         private static void UpdateVertexEdges(VertexControl vc)
         {
-            if (vc?.Vertex != null)
-            {
-                var ra = vc.RootArea;
-                if (ra == null) throw new GX_InvalidDataException("OnDragFinished() - IGraphControl object must always have RootArea property set!");
-                if (ra.IsEdgeRoutingEnabled)
-                {
-                    ra.ComputeEdgeRoutesByVertex(vc);
+            if (vc?.Vertex == null) return;
+            var ra = vc.RootArea;
+            if (ra == null) throw new GX_InvalidDataException("OnDragFinished() - IGraphControl object must always have RootArea property set!");
+            if (!ra.IsEdgeRoutingEnabled) return;
+            ra.ComputeEdgeRoutesByVertex(vc);
 #if WPF
-                    vc.InvalidateVisual();
+            vc.InvalidateVisual();
 #elif METRO
                     vc.InvalidateArrange();
 #endif
-                }
-            }
         }
 
         private static void UpdateCoordinates(GraphAreaBase area, DependencyObject obj, double horizontalChange, double verticalChange, SnapModifierFunc xSnapModifier, SnapModifierFunc ySnapModifier)
@@ -708,8 +696,8 @@ namespace GraphX.Controls
         {
             GraphAreaBase area = null;
 
-            if (obj is VertexControl)
-                area = ((VertexControl)obj).RootArea;
+            if (obj is VertexControl control)
+                area = control.RootArea;
             else if (obj is EdgeControl)
                 area = ((EdgeControl)obj).RootArea;
             else if (obj is DependencyObject)

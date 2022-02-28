@@ -36,7 +36,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
 
         public static Point Normalize(Point p)
         {
-            float l = Length(p);
+            var l = Length(p);
             if (l == 0)
                 return p;
             else

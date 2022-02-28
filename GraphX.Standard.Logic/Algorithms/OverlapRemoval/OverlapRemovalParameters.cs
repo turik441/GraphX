@@ -12,8 +12,8 @@ namespace GraphX.Logic.Algorithms.OverlapRemoval
         /// </summary>
 		public float VerticalGap
 		{
-			get { return _verticalGap; }
-			set
+			get => _verticalGap;
+            set
 			{
 			    if (_verticalGap == value) return;
 			    _verticalGap = value;
@@ -26,8 +26,8 @@ namespace GraphX.Logic.Algorithms.OverlapRemoval
         /// </summary>
 		public float HorizontalGap
 		{
-			get { return _horizontalGap; }
-			set
+			get => _horizontalGap;
+            set
 			{
 			    if (_horizontalGap == value) return;
 			    _horizontalGap = value;

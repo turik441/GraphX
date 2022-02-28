@@ -20,8 +20,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		/// </summary>
 		internal int VertexCount
 		{
-			get { return _vertexCount; }
-			set
+			get => _vertexCount;
+            set
 			{
 				_vertexCount = value;
 				UpdateParameters();
@@ -67,8 +67,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		/// </summary>
 		public double AttractionMultiplier
 		{
-			get { return _attractionMultiplier; }
-			set
+			get => _attractionMultiplier;
+            set
 			{
 				_attractionMultiplier = value;
 				CalculateConstantOfAttraction();
@@ -86,8 +86,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		/// </summary>
 		public double RepulsiveMultiplier
 		{
-			get { return _repulsiveMultiplier; }
-			set
+			get => _repulsiveMultiplier;
+            set
 			{
 				_repulsiveMultiplier = value;
 				CalculateConstantOfRepulsion();
@@ -100,8 +100,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		/// </summary>
 		public int IterationLimit
 		{
-			get { return _iterationLimit; }
-			set
+			get => _iterationLimit;
+            set
 			{
 				_iterationLimit = value;
 				NotifyPropertyChanged( "IterationLimit" );
@@ -113,8 +113,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		/// </summary>
 		public double Lambda
 		{
-			get { return _lambda; }
-			set
+			get => _lambda;
+            set
 			{
 				_lambda = value;
 				NotifyPropertyChanged( "Lamdba" );
@@ -126,8 +126,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		/// </summary>
 		public FRCoolingFunction CoolingFunction
 		{
-			get { return _coolingFunction; }
-			set
+			get => _coolingFunction;
+            set
 			{
 				_coolingFunction = value;
 				NotifyPropertyChanged( "CoolingFunction" );

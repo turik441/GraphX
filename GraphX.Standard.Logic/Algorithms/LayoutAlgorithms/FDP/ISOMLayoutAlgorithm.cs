@@ -63,8 +63,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 			//initialize ISOM data
 			foreach ( var vertex in VisitedGraph.Vertices )
 			{
-				ISOMData isomData;
-				if ( !_isomDataDict.TryGetValue( vertex, out isomData ) )
+                if ( !_isomDataDict.TryGetValue( vertex, out var isomData ) )
 				{
 					isomData = new ISOMData();
 					_isomDataDict[vertex] = isomData;

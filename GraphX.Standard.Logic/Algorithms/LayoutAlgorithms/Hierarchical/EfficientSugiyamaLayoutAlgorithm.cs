@@ -19,12 +19,6 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         /// </summary>
         private IMutableBidirectionalGraph<SugiVertex, SugiEdge> _graph;
 
-        /// <summary>
-        /// Routing points for the edges of the original graph.
-        /// </summary>
-        private readonly IDictionary<TEdge, Point[]> _edgeRoutingPoints =
-            new Dictionary<TEdge, Point[]>();
-
         private readonly IDictionary<TEdge, IList<SugiVertex>> _dummyVerticesOfEdges =
             new Dictionary<TEdge, IList<SugiVertex>>();
 
@@ -80,7 +74,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             //copy the vertices
             foreach (var vertex in VisitedGraph.Vertices)
             {
-                Size size = new Size();
+                var size = new Size();
                 if (_vertexSizes != null)
                     _vertexSizes.TryGetValue(vertex, out size);
 
@@ -141,10 +135,10 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
         #region ILayoutEdgeRouting<TEdge> Members
 
-        public IDictionary<TEdge, Point[]> EdgeRoutes
-        {
-            get { return _edgeRoutingPoints; }
-        }
+        /// <summary>
+        /// Routing points for the edges of the original graph.
+        /// </summary>
+        public IDictionary<TEdge, Point[]> EdgeRoutes { get; } = new Dictionary<TEdge, Point[]>();
 
         #endregion
     }

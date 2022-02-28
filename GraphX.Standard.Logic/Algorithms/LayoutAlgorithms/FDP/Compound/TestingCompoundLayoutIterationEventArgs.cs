@@ -9,8 +9,6 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         where TVertex : class 
         where TEdge : IEdge<TVertex>
     {
-        private readonly IDictionary<TVertex, TVertexInfo> _vertexInfos;
-
         public Point GravitationCenter { get; private set; }
 
         public TestingCompoundLayoutIterationEventArgs(
@@ -23,27 +21,20 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             Point gravitationCenter) 
             : base(iteration, statusInPercent, message, vertexPositions, innerCanvasSizes)
         {
-            _vertexInfos = vertexInfos;
+            VertexInfos = vertexInfos;
             GravitationCenter = gravitationCenter;
         }
 
         public override object GetVertexInfo(TVertex vertex)
         {
-            TVertexInfo info;
-            if (_vertexInfos.TryGetValue(vertex, out info))
+            if (VertexInfos.TryGetValue(vertex, out var info))
                 return info;
 
             return null;
         }
 
-        public IDictionary<TVertex, TVertexInfo> VertexInfos
-        {
-            get { return _vertexInfos; }
-        }
+        public IDictionary<TVertex, TVertexInfo> VertexInfos { get; }
 
-        public IDictionary<TEdge, TEdgeInfo> EdgeInfos
-        {
-            get { return null; }
-        }
+        public IDictionary<TEdge, TEdgeInfo> EdgeInfos => null;
     }
 }

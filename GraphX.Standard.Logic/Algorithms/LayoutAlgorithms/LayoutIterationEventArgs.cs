@@ -45,16 +45,14 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		{
 			if ( VertexInfos == null )
 				return null;
-			TVertexInfo info;
-			return VertexInfos.TryGetValue( vertex, out info ) ? info : default( TVertexInfo );
+            return VertexInfos.TryGetValue( vertex, out var info ) ? info : default( TVertexInfo );
 		}
 
 		public sealed override object GetEdgeInfo( TEdge edge )
 		{
 			if ( EdgeInfos == null )
 				return null;
-			TEdgeInfo info;
-			return EdgeInfos.TryGetValue( edge, out info ) ? info : default( TEdgeInfo );
+            return EdgeInfos.TryGetValue( edge, out var info ) ? info : default( TEdgeInfo );
 		}
 	}
 

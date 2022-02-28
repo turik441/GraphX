@@ -60,7 +60,7 @@ namespace GraphX.Logic.Models
         /// <param name="vertexPositions">Vertices positions</param>
         public IExternalLayout<TVertex, TEdge> GenerateLayoutAlgorithm(Dictionary<TVertex, Size>  vertexSizes, IDictionary<TVertex, Point> vertexPositions)
         {
-            var alg = ExternalLayoutAlgorithm ?? AlgorithmFactory.CreateLayoutAlgorithm(DefaultLayoutAlgorithm, _graph, vertexPositions, vertexSizes, DefaultLayoutAlgorithmParams);
+            var alg = ExternalLayoutAlgorithm ?? AlgorithmFactory.CreateLayoutAlgorithm(DefaultLayoutAlgorithm, Graph, vertexPositions, vertexSizes, DefaultLayoutAlgorithmParams);
             if (alg != null && alg.NeedVertexSizes) alg.VertexSizes = vertexSizes;
             return alg;
         }
@@ -75,7 +75,7 @@ namespace GraphX.Logic.Models
         {
             if (ExternalEdgeRoutingAlgorithm == null && DefaultEdgeRoutingAlgorithm != EdgeRoutingAlgorithmTypeEnum.None)
             {
-                return AlgorithmFactory.CreateEdgeRoutingAlgorithm(DefaultEdgeRoutingAlgorithm, new Rect(desiredSize), _graph, vertexPositions, rectangles, DefaultEdgeRoutingAlgorithmParams);
+                return AlgorithmFactory.CreateEdgeRoutingAlgorithm(DefaultEdgeRoutingAlgorithm, new Rect(desiredSize), Graph, vertexPositions, rectangles, DefaultEdgeRoutingAlgorithmParams);
             }
             return ExternalEdgeRoutingAlgorithm;
         }
@@ -93,11 +93,10 @@ namespace GraphX.Logic.Models
                 throw new GX_InvalidDataException("GXC: Algorithm storage is not initialized!");
             if (dataVertex == null) return;
             var list = new List<TEdge>();
-            IEnumerable<TEdge> edges;
-            _graph.TryGetInEdges(dataVertex, out edges);
+            Graph.TryGetInEdges(dataVertex, out var edges);
             if(edges != null)
                 list.AddRange(edges);
-            _graph.TryGetOutEdges(dataVertex, out edges);
+            Graph.TryGetOutEdges(dataVertex, out edges);
             if(edges != null)
                 list.AddRange(edges);
 
@@ -110,7 +109,7 @@ namespace GraphX.Logic.Models
 
         public IDictionary<TVertex, Point> Compute(CancellationToken cancellationToken)
         {
-            if (_graph == null)
+            if (Graph == null)
                 throw new GX_InvalidDataException("LogicCore -> Graph property not set!");
 
             IDictionary<TVertex, Point> resultCoords;

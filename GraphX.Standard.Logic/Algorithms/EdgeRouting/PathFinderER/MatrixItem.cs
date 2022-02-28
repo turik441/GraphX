@@ -10,7 +10,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         public int PlaceX;
         public int PlaceY;
 
-        public int Weight { get { return IsIntersected ? 0 : 1; } }
+        public int Weight => IsIntersected ? 0 : 1;
 
         public MatrixItem(Point pt, bool inter, int placeX, int placeY)
         {

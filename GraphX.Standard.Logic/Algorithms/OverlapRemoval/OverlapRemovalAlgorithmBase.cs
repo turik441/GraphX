@@ -12,9 +12,9 @@ namespace GraphX.Logic.Algorithms.OverlapRemoval
 		protected IDictionary<TObject, Rect> OriginalRectangles;
 		public IDictionary<TObject, Rect> Rectangles
 		{
-			get { return OriginalRectangles; }
-            set { OriginalRectangles = value; }
-		}
+			get => OriginalRectangles;
+            set => OriginalRectangles = value;
+        }
 
         /// <summary>
         /// Algorithm parameters
@@ -58,7 +58,7 @@ namespace GraphX.Logic.Algorithms.OverlapRemoval
         {
             //wrapping the old rectangles, to remember which one belongs to which object
             WrappedRectangles = new List<RectangleWrapper<TObject>>();
-            int i = 0;
+            var i = 0;
             foreach (var kvpRect in rectangles)
             {
                 WrappedRectangles.Insert(i, new RectangleWrapper<TObject>(kvpRect.Value, kvpRect.Key));

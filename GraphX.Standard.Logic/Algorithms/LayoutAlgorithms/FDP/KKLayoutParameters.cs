@@ -8,8 +8,8 @@
 		/// </summary>
 		public double Width
 		{
-			get { return _width; }
-			set
+			get => _width;
+            set
 			{
 				_width = value;
 				NotifyPropertyChanged("Width");
@@ -22,8 +22,8 @@
 		/// </summary>
 		public double Height
 		{
-			get { return _height; }
-			set
+			get => _height;
+            set
 			{
 				_height = value;
 				NotifyPropertyChanged("Height");
@@ -36,8 +36,8 @@
 		/// </summary>
 		public int MaxIterations
 		{
-			get { return _maxIterations; }
-			set
+			get => _maxIterations;
+            set
 			{
 				_maxIterations = value;
 				NotifyPropertyChanged("MaxIterations");
@@ -47,8 +47,8 @@
 		private double _k = 1;
 		public double K
 		{
-			get { return _k; }
-			set
+			get => _k;
+            set
 			{
 				_k = value;
 				NotifyPropertyChanged("K");
@@ -63,8 +63,8 @@
 		/// </summary>
 		public bool AdjustForGravity
 		{
-			get { return _adjustForGravity; }
-			set
+			get => _adjustForGravity;
+            set
 			{
 				_adjustForGravity = value;
 				NotifyPropertyChanged("AdjustForGravity");
@@ -74,8 +74,8 @@
 		private bool _exchangeVertices;
 		public bool ExchangeVertices
 		{
-			get { return _exchangeVertices; }
-			set
+			get => _exchangeVertices;
+            set
 			{
 				_exchangeVertices = value;
 				NotifyPropertyChanged("ExchangeVertices");
@@ -88,8 +88,8 @@
 		/// </summary>
 		public double LengthFactor
 		{
-			get { return _lengthFactor; }
-			set
+			get => _lengthFactor;
+            set
 			{
 				_lengthFactor = value;
 				NotifyPropertyChanged("LengthFactor");
@@ -102,8 +102,8 @@
 		/// </summary>
 		public double DisconnectedMultiplier
 		{
-			get { return _disconnectedMultiplier; }
-			set
+			get => _disconnectedMultiplier;
+            set
 			{
 				_disconnectedMultiplier = value;
 				NotifyPropertyChanged("DisconnectedMultiplier");

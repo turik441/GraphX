@@ -39,21 +39,12 @@ namespace GraphX.Controls.Animations
 #endif
         }
 
-        public void AnimateVertex(VertexControl target, bool removeDataVertex = false)
-        {
-            RunAnimation(target, removeDataVertex);
-        }
+        public void AnimateVertex(VertexControl target, bool removeDataVertex = false) => RunAnimation(target, removeDataVertex);
 
-        public void AnimateEdge(EdgeControl target, bool removeDataEdge = false)
-        {
-            RunAnimation(target, removeDataEdge);
-        }
+        public void AnimateEdge(EdgeControl target, bool removeDataEdge = false) => RunAnimation(target, removeDataEdge);
 
         public event RemoveControlEventHandler Completed;
 
-        public void OnCompleted(IGraphControl target, bool removeDataObject)
-        {
-            Completed?.Invoke(this, new ControlEventArgs(target, removeDataObject));
-        }
+        public void OnCompleted(IGraphControl target, bool removeDataObject) => Completed?.Invoke(this, new ControlEventArgs(target, removeDataObject));
     }
 }

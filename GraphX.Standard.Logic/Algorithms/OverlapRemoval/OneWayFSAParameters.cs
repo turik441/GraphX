@@ -10,8 +10,8 @@
 		private OneWayFSAWayEnum _way;
 		public OneWayFSAWayEnum Way
 		{
-			get { return _way; }
-			set
+			get => _way;
+            set
 			{
 				if ( _way != value )
 				{

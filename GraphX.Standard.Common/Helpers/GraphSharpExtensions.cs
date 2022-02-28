@@ -33,7 +33,7 @@ namespace GraphX.Common
         }
 
         public static IEnumerable<TEdge> GetInEdges<TVertex, TEdge>(this IBidirectionalGraph<TVertex, TEdge> graph, TVertex vertex)
-    where TEdge : IEdge<TVertex>
+            where TEdge : IEdge<TVertex>
         {
             var result = new List<TEdge>();
             IEnumerable<TEdge> edges;
@@ -44,7 +44,7 @@ namespace GraphX.Common
         }
 
         public static IEnumerable<TEdge> GetOutEdges<TVertex, TEdge>(this IBidirectionalGraph<TVertex, TEdge> graph, TVertex vertex)
-where TEdge : IEdge<TVertex>
+            where TEdge : IEdge<TVertex>
         {
             var result = new List<TEdge>();
             IEnumerable<TEdge> edges;
@@ -123,9 +123,7 @@ where TEdge : IEdge<TVertex>
         public static IEnumerable<TVertex> GetSources<TVertex, TEdge>(this IBidirectionalGraph<TVertex, TEdge> g)
             where TEdge : IEdge<TVertex>
         {
-            return from v in g.Vertices
-                   where g.InDegree(v) == 0
-                   select v;
+            return g.Vertices.Where(v => g.InDegree(v) == 0);
         }
 
         /// <summary>
@@ -138,8 +136,7 @@ where TEdge : IEdge<TVertex>
             where TEdge : IEdge<TVertex>
             where TGraph : IBidirectionalGraph<TVertex, TEdge>
         {
-            double[,] distances;
-            return g.GetDiameter<TVertex, TEdge, TGraph>(out distances);
+            return g.GetDiameter<TVertex, TEdge, TGraph>(out double[,] distances);
         }
 
         /// <summary>
@@ -217,11 +214,7 @@ where TEdge : IEdge<TVertex>
             return distances;
         }
 
-        public static TVertex OtherVertex<TVertex>(this IEdge<TVertex> edge, TVertex thisVertex)
-        {
-            return edge.Source.Equals(thisVertex) ? edge.Target : edge.Source;
-        }
-
+        public static TVertex OtherVertex<TVertex>(this IEdge<TVertex> edge, TVertex thisVertex) => edge.Source.Equals(thisVertex) ? edge.Target : edge.Source;
 
 
         public static void AddEdgeRange<TVertex, TEdge>(this IMutableEdgeListGraph<TVertex, TEdge> graph, IEnumerable<TEdge> edges)
@@ -252,11 +245,8 @@ where TEdge : IEdge<TVertex>
             this IVertexAndEdgeListGraph<TOldVertex, TOldEdge> oldGraph,
             Func<TOldEdge, TNewEdge> edgeMapperFunc)
             where TOldEdge : IEdge<TOldVertex>
-            where TNewEdge : IEdge<TOldVertex>
-        {
-            return oldGraph.Convert<TOldVertex, TOldEdge, TOldVertex, TNewEdge>(null, edgeMapperFunc);
-        }
-
+            where TNewEdge : IEdge<TOldVertex> =>
+            oldGraph.Convert<TOldVertex, TOldEdge, TOldVertex, TNewEdge>(null, edgeMapperFunc);
 
 
         public static TNewGraph Convert<TOldVertex, TOldEdge, TNewVertex, TNewEdge, TNewGraph>(

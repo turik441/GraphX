@@ -50,8 +50,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 			/// </summary>
 			public int LayerIndex
 			{
-				get { return _layerIndex; }
-				set
+				get => _layerIndex;
+                set
 				{
 					if ( _layerIndex != value )
 					{
@@ -68,12 +68,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 			/// <summary>
 			/// Gets that this vertex is a dummy vertex (a point of a replaced long edge) or not.
 			/// </summary>
-			public bool IsDummyVertex
-			{
-				get { return Original == null; }
-			}
+			public bool IsDummyVertex => Original == null;
 
-			/// <summary>
+            /// <summary>
 			/// The priority of the vertex. Used in the horizontal position assignment phase.
 			/// The dummy vertices has maximal priorities (because the dummy edge should be as vertical as possible).
 			/// The other vertices priority based on it's edge count.

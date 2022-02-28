@@ -18,11 +18,10 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
         public SimpleEdgeRouting(TGraph graph, IDictionary<TVertex, Point> vertexPositions, IDictionary<TVertex, Rect> vertexSizes, IEdgeRoutingParameters parameters = null)
             : base(graph, vertexPositions, vertexSizes, parameters)
         {
-            var erParameters = parameters as SimpleERParameters;
-            if (erParameters != null)
+            if (parameters is SimpleERParameters erParameters)
             {
-                drawback_distance = erParameters.BackStep;
-                side_distance = erParameters.SideStep;
+                _drawbackDistance = erParameters.BackStep;
+                _sideDistance = erParameters.SideStep;
             }
         }
 
@@ -45,9 +44,9 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                 EdgeRoutingTest(item, cancellationToken);
         }
 
-        double drawback_distance = 10;
-        double side_distance = 5;
-        double vertex_margin_distance = 35;
+        readonly double _drawbackDistance = 10;
+        readonly double _sideDistance = 5;
+        private const double vertex_margin_distance = 35;
 
         private IDictionary<TVertex, KeyValuePair<TVertex, Rect>> getSizesCollection(TEdge ctrl, Point end_point)
         {
@@ -79,12 +78,12 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
             var tempList = new List<Point>();
             tempList.Add(startPoint);
 
-            bool haveIntersections = true;
+            var haveIntersections = true;
 
             //while we have some intersections - proceed
             while (haveIntersections)
             {
-                var curDrawback = drawback_distance;
+                var curDrawback = _drawbackDistance;
                 while (true)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -101,9 +100,8 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                     else
                     {
                         var r = originalSizes[item].Value;
-                        Point checkpoint;
                         //check for intersection point. if none found - remove vertex from checklist
-                        if (GetIntersectionPoint(r, startPoint, endPoint, out checkpoint) == -1)
+                        if (GetIntersectionPoint(r, startPoint, endPoint, out var checkpoint) == -1)
                         {
                             checklist.Remove(item); continue;
                         }
@@ -119,11 +117,11 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                         else Y = checkpoint.Y + curDrawback;
                         //set drawback checkpoint
                         checkpoint = new Point(X, Y);
-                        bool isStartPoint = checkpoint == startPoint;
+                        var isStartPoint = checkpoint == startPoint;
 
-                        bool routeFound = false;
-                        bool viceversa = false;
-                        int counter = 1;
+                        var routeFound = false;
+                        var viceversa = false;
+                        var counter = 1;
                         var joint = new Point();
                         bool? blocked_direction = null;
                         while (!routeFound)
@@ -131,7 +129,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                             cancellationToken.ThrowIfCancellationRequested();
 
                             //choose opposite vector side each cycle
-                            var signedDistance = viceversa ? side_distance : -side_distance;
+                            var signedDistance = viceversa ? _sideDistance : -_sideDistance;
                             //get new point coordinate
                             joint = new Point(
                                  checkpoint.X + signedDistance * counter * (mainVector.Y / mainVector.Length),
@@ -180,7 +178,7 @@ namespace GraphX.Logic.Algorithms.EdgeRouting
                         if (blocked_direction != null && !isStartPoint)
                         {
                             //search has been blocked - need to drawback
-                            curDrawback += drawback_distance;
+                            curDrawback += _drawbackDistance;
                         }
                         else
                         {

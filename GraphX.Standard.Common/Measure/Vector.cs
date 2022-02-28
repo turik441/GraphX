@@ -4,32 +4,11 @@ namespace GraphX.Measure
 {
     public struct Vector
     {
-        internal double _x;
-        internal double _y;
-        public double X
-        {
-            get
-            {
-                return _x;
-            }
-            set
-            {
-                _x = value;
-            }
-        }
-        public double Y
-        {
-            get
-            {
-                return _y;
-            }
-            set
-            {
-                _y = value;
-            }
-        }
+        public double X { get; set; }
 
-        public Vector(double x, double y) { _x = x; _y = y; }
+        public double Y { get; set; }
+
+        public Vector(double x, double y) { X = x; Y = y; }
 
         public static Vector Zero { get; } = new Vector();
 
@@ -49,17 +28,17 @@ namespace GraphX.Measure
 
         public static double operator *(Vector vector1, Vector vector2)
         {
-            return ((vector1._x * vector2._x) + (vector1._y * vector2._y));
+            return ((vector1.X * vector2.X) + (vector1.Y * vector2.Y));
         }
 
         public static Vector operator *(double scalar, Vector vector)
         {
-            return new Vector(vector._x * scalar, vector._y * scalar);
+            return new Vector(vector.X * scalar, vector.Y * scalar);
         }
 
         public static Vector operator *(Vector vector, double scalar)
         {
-            return new Vector(vector._x * scalar, vector._y * scalar);
+            return new Vector(vector.X * scalar, vector.Y * scalar);
         }
 
         public static Vector operator *(int value1, Vector value2)
@@ -130,40 +109,40 @@ namespace GraphX.Measure
             return (X.GetHashCode() ^ Y.GetHashCode());
         }
 
-        public double Length => Math.Sqrt((_x * _x) + (_y * _y));
-        public double LengthSquared => ((_x * _x) + (_y * _y));
+        public double Length => Math.Sqrt((X * X) + (Y * Y));
+        public double LengthSquared => ((X * X) + (Y * Y));
 
         public void Normalize()
         {
-            var v = this / Math.Max(Math.Abs(_x), Math.Abs(_y));
+            var v = this / Math.Max(Math.Abs(X), Math.Abs(Y));
             v = this / Length;
-            _x = v._x;
-            _y = v._y;
+            X = v.X;
+            Y = v.Y;
         }
 
         public static double CrossProduct(Vector vector1, Vector vector2)
         {
-            return ((vector1._x * vector2._y) - (vector1._y * vector2._x));
+            return ((vector1.X * vector2.Y) - (vector1.Y * vector2.X));
         }
 
         public static double AngleBetween(Vector vector1, Vector vector2)
         {
-            var y = (vector1._x * vector2._y) - (vector2._x * vector1._y);
-            var x = (vector1._x * vector2._x) + (vector1._y * vector2._y);
+            var y = (vector1.X * vector2.Y) - (vector2.X * vector1.Y);
+            var x = (vector1.X * vector2.X) + (vector1.Y * vector2.Y);
             return (Math.Atan2(y, x) * 57.295779513082323);
         }
 
         public void Negate()
         {
-            _x = -_x;
-            _y = -_y;
+            X = -X;
+            Y = -Y;
         }
 
         public override string ToString()
         {
-            return $"{_x}:{_y}";
+            return $"{X}:{Y}";
         }
 
-        public Point ToPoint => new Point(_x, _y);
+        public Point ToPoint => new Point(X, Y);
     }
 }

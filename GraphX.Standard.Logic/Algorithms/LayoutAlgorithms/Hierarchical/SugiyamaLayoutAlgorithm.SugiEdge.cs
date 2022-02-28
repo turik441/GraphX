@@ -12,8 +12,8 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 		{
 			public bool IsLongEdge
 			{
-				get { return DummyVertices != null; }
-				set
+				get => DummyVertices != null;
+                set
 				{
 					if ( IsLongEdge != value )
 					{
@@ -24,15 +24,9 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
 
 			public IList<SugiVertex> DummyVertices { get; private set; }
 			public TEdge Original { get; private set; }
-			public bool IsReverted
-			{
-				get
-				{
-					return !Original.Equals(default(TEdge)) && Original.Source == Target.Original && Original.Target == Source.Original;
-				}
-			}
+			public bool IsReverted => !Original.Equals(default(TEdge)) && Original.Source == Target.Original && Original.Target == Source.Original;
 
-			public SugiEdge( TEdge original, SugiVertex source, SugiVertex target, EdgeTypes type )
+            public SugiEdge( TEdge original, SugiVertex source, SugiVertex target, EdgeTypes type )
 				: base( source, target, type )
 			{
 				Original = original;

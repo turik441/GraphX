@@ -25,7 +25,7 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
         /// <summary>
         /// Gets if current algorithm supports vertex freeze feature (part of VAESPS)
         /// </summary>
-        public override bool SupportsObjectFreeze { get { return false; } }
+        public override bool SupportsObjectFreeze => false;
 
         public override void ResetGraph(IEnumerable<TVertex> vertices, IEnumerable<TEdge> edges)
         {
@@ -41,19 +41,19 @@ namespace GraphX.Logic.Algorithms.LayoutAlgorithms
             if(VertexPositions.Count == 0)
                 foreach(var item in VisitedGraph.Vertices.Where(v => v.SkipProcessing == ProcessingOptionEnum.Freeze))
                     VertexPositions.Add(item, new Point());
-            double[] halfSize = new double[usableVertices.Count];
-            int i = 0;
+            var halfSize = new double[usableVertices.Count];
+            var i = 0;
             foreach ( var v in usableVertices)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                Size s = _sizes[v];
+                var s = _sizes[v];
                 halfSize[i] = Math.Sqrt( s.Width * s.Width + s.Height * s.Height ) * 0.5;
                 perimeter += halfSize[i] * 2;
                 i++;
             }
 
-            double radius = perimeter / ( 2 * Math.PI );
+            var radius = perimeter / ( 2 * Math.PI );
 
             //
             //precalculation

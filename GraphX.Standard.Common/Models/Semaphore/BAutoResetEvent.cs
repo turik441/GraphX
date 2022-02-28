@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace GraphX
@@ -56,10 +53,7 @@ namespace GraphX
             throw new NotImplementedException();
         }
 
-        internal override WaitHandle WaitHandle
-        {
-            get { return _are; }
-        }
+        internal override WaitHandle WaitHandle => _are;
 
         public void Dispose()
         {

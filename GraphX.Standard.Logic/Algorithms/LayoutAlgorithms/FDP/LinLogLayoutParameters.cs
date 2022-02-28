@@ -6,8 +6,8 @@
 
 		public double AttractionExponent
 		{
-			get { return attractionExponent; }
-			set
+			get => attractionExponent;
+            set
 			{
 				attractionExponent = value;
 				NotifyPropertyChanged("AttractionExponent");
@@ -18,8 +18,8 @@
 
 		public double RepulsiveExponent
 		{
-			get { return repulsiveExponent; }
-			set
+			get => repulsiveExponent;
+            set
 			{
 				repulsiveExponent = value;
 				NotifyPropertyChanged("RepulsiveExponent");
@@ -30,8 +30,8 @@
 
 		public double GravitationMultiplier
 		{
-			get { return gravitationMultiplier; }
-			set
+			get => gravitationMultiplier;
+            set
 			{
 				gravitationMultiplier = value;
 				NotifyPropertyChanged("GravitationMultiplier");
@@ -42,8 +42,8 @@
 
 		public int IterationCount
 		{
-			get { return iterationCount; }
-			set
+			get => iterationCount;
+            set
 			{
 				iterationCount = value;
 				NotifyPropertyChanged("IterationCount");
